@@ -9078,7 +9078,8 @@ void Player::DuelComplete(DuelCompleteType type)
     sLog->outDebug(LOG_FILTER_UNITS, "Duel Complete %s %s", GetName(), duel->opponent->GetName());
 
     WorldPacket data(SMSG_DUEL_COMPLETE, (1));
-    data << (uint8)((type != DUEL_INTERRUPTED) ? 1 : 0);
+	data.WriteBit(type != DUEL_INTERRUPTED);
+	data.FlushBits();
     GetSession()->SendPacket(&data);
 
     if (duel->opponent->GetSession())
@@ -9086,9 +9087,13 @@ void Player::DuelComplete(DuelCompleteType type)
 
     if (type != DUEL_INTERRUPTED)
     {
-        data.Initialize(SMSG_DUEL_WINNER, (1+20));          // we guess size
-        data << uint8(type == DUEL_WON ? 0 : 1);            // 0 = just won; 1 = fled
-        data << duel->opponent->GetName();
+        data.Initialize(SMSG_DUEL_WINNER, 1 + 20);        // we guess size
+        data.WriteBit(type == DUEL_WON);                  // 0 = just won; 1 = fled
+		data << duel->opponent->GetName();
+		data << GetName();
+		data << uint32(realmID);
+		data << duel->opponent->GetName();
+		data << uint32(realmID);
         data << GetName();
         SendMessageToSet(&data, true);
     }

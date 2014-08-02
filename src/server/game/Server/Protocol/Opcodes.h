@@ -185,8 +185,7 @@ enum Opcodes
     CMSG_DESTROY_ITEM                                 = 0x0026, // 5.4.8
     CMSG_DISMISS_CONTROLLED_VEHICLE                   = 0x0000,
     CMSG_DISMISS_CRITTER                              = 0x0000,
-    CMSG_DUEL_ACCEPTED                                = 0x03E2, // 5.4.8
-    CMSG_DUEL_CANCELLED                               = 0x0000,
+	CMSG_DUEL_RESPONSE                                = 0x03E2, // 5.4.8
     CMSG_DUEL_PROPOSED                                = 0x1A26, // 5.4.8
     CMSG_LFD_PLAYER_LOCK_INFO_REQUEST                 = 0x0000,
     CMSG_EJECT_PASSENGER                              = 0x0000,
@@ -791,7 +790,6 @@ enum Opcodes
     SMSG_CANCEL_SPELL_VISUAL                          = 0x0000,
     SMSG_CANCEL_SPELL_VISUAL_KIT                      = 0x0000,
     SMSG_CAST_FAILED                                  = 0x143A, // 5.4.8
-    SMSG_CAN_DUEL_RESULT                              = 0x0000,
     SMSG_CHALLENGE_MODE_MAP_STATS_UPDATE              = 0x0000,
     SMSG_CHALLENGE_MODE_DELETE_LEADER_RESULT          = 0x0000,
     SMSG_CHALLENGE_MODE_ALL_MAP_STATS                 = 0x0000,
@@ -874,7 +872,7 @@ enum Opcodes
     SMSG_DB_REPLY                                     = 0x103B, // 5.4.8
     SMSG_DEATH_RELEASE_LOC                            = 0x0000,
     SMSG_DEBUG_RUNE_REGEN                             = 0x0000,
-    SMSG_DEFENSE_MESSAGE                              = 0x0000,
+	SMSG_DEFENSE_MESSAGE                              = 0x0A1F, // 5.4.8
     SMSG_DESTROY_OBJECT                               = 0x14C2, // 5.4.8
     SMSG_DESTROY_ARENA_UNIT                           = 0x0000,
     SMSG_DESTRUCTIBLE_BUILDING_DAMAGE                 = 0x0000,
@@ -888,10 +886,10 @@ enum Opcodes
     SMSG_DISPLAY_PLAYER_CHOICE                        = 0x0000,
     SMSG_DONT_AUTO_PUSH_SPELLS_TO_ACTION_BAR          = 0x0000,
     SMSG_DROP_NEW_CONNECTION                          = 0x0000,
-    SMSG_DUEL_COMPLETE                                = 0x108B, // 5.4.8
-    SMSG_DUEL_COUNTDOWN                               = 0x10C2, // 5.4.8
-    SMSG_DUEL_INBOUNDS                                = 0x0000,
-    SMSG_DUEL_OUT_OF_BOUNDS                           = 0x0000,
+	SMSG_DUEL_COMPLETE                                = 0x1C0A, //0x108B, // 5.4.8 
+	SMSG_DUEL_COUNTDOWN                               = 0x129F, //0x10C2, // 5.4.8
+	SMSG_DUEL_INBOUNDS                                = 0x163A, // 5.4.8
+	SMSG_DUEL_OUT_OF_BOUNDS                           = 0x001A, // 5.4.8
     SMSG_DUEL_REQUESTED                               = 0x0022, // 5.4.8
     SMSG_DUEL_WINNER                                  = 0x10E1, // 5.4.8
     SMSG_DUMP_RIDE_TICKETS_RESPONSE                   = 0x0000,
