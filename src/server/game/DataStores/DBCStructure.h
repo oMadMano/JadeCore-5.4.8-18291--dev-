@@ -531,37 +531,6 @@ struct AchievementCriteriaEntry
     uint32 additionalConditionValue[MAX_ADDITIONAL_CRITERIA_CONDITIONS];    // 20-22
 };
 
-/* c'est vraiment fait à l'arrache
-<Achievement_Criteria build="17371">
-        <index>
-      <primary>id</primary>
-    </index>
-    <field type="uint" name="id" />
-    <field type="int" name="achievement" />
-    <field type="int" name="type" />
-    <field type="uint" name="Type_1" />
-    <field type="uint" name="Type_2" />
-    <field type="uint" name="Type_3" />
-    <field type="uint" name="Type_4" />
-    <field type="uint" name="Type_5" />
-    <field type="uint" name="Type_6" />
-    <field type="uint" name="Type_7" />
-    <field type="string" name="Criteria_name" />
-    <field type="uint" name="completionFlag" />
-    <field type="uint" name="timedCriteriaStartType" />
-    <field type="uint" name="timedCriteriaMiscId" />
-    <field type="uint" name="timeLimit" />
-    <field type="uint" name="showOrder" />
-
-    <field type="uint" name="additionalConditionType_1" />
-    <field type="uint" name="additionalConditionType_2" />
-    <field type="uint" name="additionalConditionType_3" />
-    <field type="uint" name="additionalConditionValue_1" />
-    <field type="uint" name="additionalConditionValue_2" />
-    <field type="uint" name="additionalConditionValue_3" />
-    <field type="uint" name="Unk_1" />
-  </Achievement_Criteria>
-*/
 struct AreaTableEntry
 {
     uint32  ID;                                             // 0
@@ -625,35 +594,6 @@ struct AreaPOIEntry
     //uint32 unk;           //22
 };
 
-/*<AreaPOI build="17371">
-    <index>
-    <primary>id</primary>
-    </index>
-    <field type="uint" name="id" />
-    <field type="uint" name="icon" />
-    <field type="uint" name="icon_1" />
-    <field type="uint" name="icon_2" />
-    <field type="uint" name="icon_3" />
-    <field type="uint" name="icon_4" />
-    <field type="uint" name="icon_5" />
-    <field type="uint" name="icon_6" />
-    <field type="uint" name="icon_7" />
-    <field type="uint" name="icon_8" />
-    <field type="uint" name="icon_9" />
-    <field type="uint" name="icon_10" />
-    <field type="float" name="pos_x" />
-    <field type="float" name="pos_y" />
-    <field type="uint" name="mapId" />
-    <field type="uint" name="value_1" />
-    <field type="uint" name="zoneId" />
-    <field type="string" name="name_1" />
-    <field type="string" name="name_2" />
-    <field type="uint" name="worldstate" />
-    <field type="uint" name="value_2" />
-    <field type="uint" name="unk_505_1" />
-    <field type="uint" name="unk_505_2" />
- </AreaPOI>
-    */
 struct AreaTriggerEntry
 {
     uint32  id;                                             // 0        m_ID
@@ -707,7 +647,6 @@ struct BarberShopStyleEntry
     uint32  hair_id;                                        // 7        m_data (real ID to hair/facial hair)
 };
 
-// @author Selenium: 5.4 valid
 struct BattlemasterListEntry
 {
     uint32  id;                                                 // 0
@@ -849,19 +788,6 @@ struct ChrSpecializationsEntry
     //uint32 unk                    // 13
 };
 
-/* not used
-struct CinematicCameraEntry
-{
-    uint32      id;                                         // 0 index
-    char*       filename;                                   // 1
-    uint32      soundid;                                    // 2 in SoundEntries.dbc or 0
-    float       start_x;                                    // 3
-    float       start_y;                                    // 4
-    float       start_z;                                    // 5
-    float       unk6;                                       // 6 speed?
-};
-*/
-
 struct CinematicSequencesEntry
 {
     uint32      Id;                                         // 0 index
@@ -944,17 +870,6 @@ struct CreatureTypeEntry
     //uint32    no_expirience;                              // 2        m_flags no exp? critters, non-combat pets, gas cloud.
 };
 
-/* not used
-struct CurrencyCategoryEntry
-{
-    uint32    ID;                                           // 0
-    uint32    Unk1;                                         // 1        0 for known categories and 3 for unknown one (3.0.9)
-    char*   Name[16];                                       // 2-17     name
-    //                                                      // 18       string flags
-};
-*/
-
-// @author Selenium: 5.4 valid
 struct CurrencyTypesEntry
 {
     uint32 ID;                                              // 0        not used
@@ -970,7 +885,6 @@ struct CurrencyTypesEntry
     //char* description;                                    // 10
 };
 
-// @author Selenium: 5.4 valid
 struct DestructibleModelDataEntry
 {
     uint32  Id;                                             // 0
@@ -999,7 +913,6 @@ struct DestructibleModelDataEntry
     //uint32  Unk8;                                         // 23
 };
 
-// @author Selenium: 5.4 valid
 struct DungeonEncounterEntry
 {
     uint32 id;                                              // 0        unique id
@@ -1013,21 +926,18 @@ struct DungeonEncounterEntry
     //uint32 unk_3
 };
 
-// @author Selenium: 5.4 valid
 struct DurabilityCostsEntry
 {
     uint32    Itemlvl;                                      // 0
     uint32    multiplier[29];                               // 1-29
 };
 
-// @author Selenium: 5.4 valid
 struct DurabilityQualityEntry
 {
     uint32    Id;                                           // 0
     float     quality_mod;                                  // 1
 };
 
-// @author Selenium: 5.4 valid
 struct EmotesEntry
 {
     uint32  Id;                                             // 0
@@ -1040,7 +950,6 @@ struct EmotesEntry
     //uint32 unk_1                                          // 7
 };
 
-// @author Selenium: 5.4 valid
 struct EmotesTextEntry
 {
     uint32  Id;                                             // 0
@@ -1064,7 +973,6 @@ struct EmotesTextEntry
     //uint32                                                // 18       0 only
 };
 
-// @author Selenium: 5.4 valid
 struct FactionEntry
 {
     uint32      ID;                                         // 0        m_ID
@@ -1093,7 +1001,6 @@ struct FactionEntry
 
 #define MAX_FACTION_RELATIONS 4
 
-// @author Selenium: 5.4 valid
 struct FactionTemplateEntry
 {
     uint32      ID;                                         // 0        m_ID
@@ -1148,7 +1055,6 @@ struct FactionTemplateEntry
     bool IsContestedGuardFaction() const { return (factionFlags & FACTION_TEMPLATE_FLAG_CONTESTED_GUARD) != 0; }
 };
 
-// @author Selenium: 5.4 valid
 struct GameObjectDisplayInfoEntry
 {
     uint32      Displayid;                                  // 0        m_ID
@@ -1165,7 +1071,6 @@ struct GameObjectDisplayInfoEntry
     //float unk_2;                                          // 20
 };
 
-// @author Selenium: 5.4 valid
 struct GemPropertiesEntry
 {
     uint32      ID;                                         // 0        m_id
@@ -1176,7 +1081,6 @@ struct GemPropertiesEntry
     //uint32                                                // 5
 };
 
-// @author Selenium: 5.4 valid
 struct GlyphPropertiesEntry
 {
     uint32  Id;                                             // 0
@@ -1185,7 +1089,6 @@ struct GlyphPropertiesEntry
     uint32  Unk1;                                           // 3        GlyphIconId (SpellIcon.dbc)
 };
 
-// @author Selenium: 5.4 valid
 struct GlyphSlotEntry
 {
     uint32  Id;                                             // 0
@@ -1277,7 +1180,6 @@ struct GtOCTBaseMPByClassEntry
     float ratio;
 };
 
-// @author Selenium: 5.4 valid
 struct GuildPerkSpellsEntry
 {
     //uint32    Id;                                            // 0
@@ -1285,26 +1187,10 @@ struct GuildPerkSpellsEntry
     uint32  SpellId;                                           // 2
 };
 
-//Unused
-//struct HolidayDescriptionsEntry
-//{
-//    uint32 ID;                                              // 0, m_holidayDescriptionID
-//    //char*     name                                        // 1  m_name_lang
-//};
-//
-//
-//
-//struct HolidayNamesEntry
-//{
-//    uint32 ID;                                              // 0, m_holidayNameID
-//    //char*     name                                        // 1  m_name_lang
-//};
-
 #define MAX_HOLIDAY_DURATIONS 10
 #define MAX_HOLIDAY_DATES 26
 #define MAX_HOLIDAY_FLAGS 10
 
-// @author Selenium: 5.4 valid
 struct HolidaysEntry
 {
     uint32 Id;                                              // 0        m_ID
@@ -1321,7 +1207,6 @@ struct HolidaysEntry
     //uint32 flags;                                         // 54       m_flags (0 = Darkmoon Faire, Fishing Contest and Wotlk Launch, rest is 1)
 };
 
-// @author Selenium: 5.4 valid
 // ImportPriceArmor.dbc
 struct ImportPriceArmorEntry
 {
@@ -1332,7 +1217,6 @@ struct ImportPriceArmorEntry
     float PlateFactor;                                      // 4        Price factor plate
 };
 
-// @author Selenium: 5.4 valid
 // ImportPriceQuality.dbc
 struct ImportPriceQualityEntry
 {
@@ -1340,7 +1224,6 @@ struct ImportPriceQualityEntry
     float Factor;                                           // 1        Price factor
 };
 
-// @author Selenium: 5.4 valid
 // ImportPriceShield.dbc
 struct ImportPriceShieldEntry
 {
@@ -1348,7 +1231,6 @@ struct ImportPriceShieldEntry
     float Factor;                                           // 1        Price factor
 };
 
-// @author Selenium: 5.4 valid
 // ImportPriceWeapon.dbc
 struct ImportPriceWeaponEntry
 {
@@ -1356,7 +1238,6 @@ struct ImportPriceWeaponEntry
     float Factor;                                           // 1        Price factor
 };
 
-// @author Selenium: 5.4 valid
 // ItemPriceBase.dbc
 struct ItemPriceBaseEntry
 {
@@ -1366,7 +1247,6 @@ struct ItemPriceBaseEntry
     float   WeaponFactor;                                   // 3        Price factor for weapons
 };
 
-// @author Selenium: 5.4 valid
 struct ItemReforgeEntry
 {
     uint32  Id;                                             // 0
@@ -1376,16 +1256,6 @@ struct ItemReforgeEntry
     float   FinalMultiplier;                                // 4
 };
 
-// @author Selenium: 5.4 valid
-// common struct for:
-// ItemDamageAmmo.dbc
-// ItemDamageOneHand.dbc
-// ItemDamageOneHandCaster.dbc
-// ItemDamageRanged.dbc
-// ItemDamageThrown.dbc
-// ItemDamageTwoHand.dbc
-// ItemDamageTwoHandCaster.dbc
-// ItemDamageWand.dbc
 struct ItemDamageEntry
 {
     uint32    Id;                                             // 0 item level
@@ -1393,7 +1263,6 @@ struct ItemDamageEntry
     uint32    Id2;                                            // 8 item level
 };
 
-// @author Selenium: 5.4 valid
 struct ItemArmorQualityEntry
 {
     uint32    Id;                                             // 0 item level
@@ -1401,7 +1270,6 @@ struct ItemArmorQualityEntry
     uint32    Id2;                                            // 8 item level
 };
 
-// @author Selenium: 5.4 valid
 struct ItemArmorShieldEntry
 {
     uint32    Id;                                             // 0 item level
@@ -1409,7 +1277,6 @@ struct ItemArmorShieldEntry
     float     Value[7];                                       // 2-8 multiplier for item quality
 };
 
-// @author Selenium: 5.4 valid
 struct ItemArmorTotalEntry
 {
     uint32    Id;                                             // 0 item level
@@ -1417,7 +1284,6 @@ struct ItemArmorTotalEntry
     float     Value[4];                                       // 2-5 multiplier for armor types (cloth...plate)
 };
 
-// @author Selenium: 5.4 valid
 // ItemClass.dbc
 struct ItemClassEntry
 {
@@ -1427,14 +1293,12 @@ struct ItemClassEntry
   //char*     Name;                                           // 3 class name
 };
 
-// @author Selenium: 5.4 valid
 struct ItemBagFamilyEntry
 {
     uint32   ID;                                            // 0
     //char*     name;                                       // 1        m_name_lang
 };
 
-// @author Selenium: 5.4 valid
 struct ItemDisplayInfoEntry
 {
     uint32  ID;                                             // 0        m_ID
@@ -1452,7 +1316,6 @@ struct ItemDisplayInfoEntry
     //uint32 unk_1;                                         // 25
 };
 
-// @author Selenium: 5.4 valid
 struct ItemDisenchantLootEntry
 {
     uint32 Id;                                              // 0
@@ -1464,7 +1327,6 @@ struct ItemDisenchantLootEntry
     uint32 RequiredDisenchantSkill;                         // 6
 };
 
-// @author Selenium: 5.4 valid
 struct ItemLimitCategoryEntry
 {
     uint32      ID;                                         // 0 Id
@@ -1475,7 +1337,6 @@ struct ItemLimitCategoryEntry
 
 #define MAX_ITEM_ENCHANTMENT_EFFECTS 3
 
-// @author Selenium: 5.4 valid
 struct ItemRandomPropertiesEntry
 {
     uint32    ID;                                           // 0        m_ID
@@ -1486,7 +1347,6 @@ struct ItemRandomPropertiesEntry
     char* nameSuffix;                                       // 7        m_name_lang
 };
 
-// @author Selenium: 5.4 valid
 struct ItemRandomSuffixEntry
 {
     uint32    ID;                                           // 0        m_ID
@@ -1510,7 +1370,6 @@ struct ItemSetEntry
     uint32    required_skill_value;                         // 36       m_requiredSkillRank
 };
 
-// @author Selenium: 5.4 valid
 struct LFGDungeonEntry
 {
     uint32  ID;                                             // 0
@@ -1548,8 +1407,6 @@ struct LFGDungeonEntry
     bool isScenario() const { return type == 1 && tankNeeded == 0 && healerNeeded == 0 && dpsNeeded == 3; }
 };
 
-
-// @author Selenium: 5.4 valid
 struct LiquidTypeEntry
 {
     uint32      Id;                                         // 1
@@ -1575,7 +1432,6 @@ struct LiquidTypeEntry
 
 #define MAX_LOCK_CASE 8
 
-// @author Selenium: 5.4 valid
 struct LockEntry
 {
     uint32      ID;                                         // 0        m_ID
@@ -1585,7 +1441,6 @@ struct LockEntry
     //uint32      Action[MAX_LOCK_CASE];                    // 25-32    m_Action
 };
 
-// @author Selenium: 5.4 valid
 struct PhaseEntry
 {
     uint32    ID;                                           // 0
@@ -1593,7 +1448,6 @@ struct PhaseEntry
     uint32    flag;                                         // 2
 };
 
-// @author Selenium: 5.4 valid
 struct MailTemplateEntry
 {
     uint32  ID;                                             // 0
@@ -1601,7 +1455,6 @@ struct MailTemplateEntry
     char*   content;                                        // 2        m_body_lang
 };
 
-// @author Selenium: 5.4 valid
 struct MapEntry
 {
     uint32  MapID;                                          // 0
@@ -1652,7 +1505,6 @@ struct MapEntry
     }
 };
 
-// @author Selenium: 5.4 valid
 struct MapDifficultyEntry
 {
     //uint32      Id;                                       // 0
@@ -1664,19 +1516,6 @@ struct MapDifficultyEntry
     //uint32    unk_1;                                      // 6        0 only
 };
 
-/*
-<MapDifficulty build="17371">
-    <field type="uint" name="Id" />
-    <field type="uint" name="MapId" />
-    <field type="uint" name="Difficulty" />
-    <field type="string" name="areaTriggerText" />
-    <field type="uint" name="resetTime" />
-    <field type="uint" name="maxPlayers" />
-    <field type="uint" name="Unk_1" />
-  </MapDifficulty>
-*/
-
-// @author Selenium: 5.4 valid
 struct MountCapabilityEntry
 {
     uint32 Id;
@@ -1691,14 +1530,12 @@ struct MountCapabilityEntry
 
 #define MAX_MOUNT_CAPABILITIES 24
 
-// @author Selenium: 5.4 valid
 struct MountTypeEntry
 {
     uint32 Id;
     uint32 MountCapability[MAX_MOUNT_CAPABILITIES];
 };
 
-// @author Selenium: 5.4 valid
 struct MovieEntry
 {
     uint32      Id;                                         // 0        index
@@ -1708,20 +1545,6 @@ struct MovieEntry
     //uint32      unk3;                                     // 4        5.0.0
 };
 
-/*
-  <Movie build="17371">
-    <index>
-      <primary>Id</primary>
-    </index>
-    <field type="uint" name="Id" />
-    <field type="uint" name="unk_0" />
-    <field type="uint" name="unk_1" />
-    <field type="uint" name="unk_2" />
-    <field type="uint" name="unk_3" />
-  </Movie>
-*/
-
-// @author Selenium: 5.4 valid
 struct NameGenEntry
 {
     //uint32 id;
@@ -1732,7 +1555,6 @@ struct NameGenEntry
 
 #define MAX_OVERRIDE_SPELL 10
 
-// @author Selenium: 5.4 valid
 struct OverrideSpellDataEntry
 {
     uint32      id;                                         // 0
@@ -1741,7 +1563,6 @@ struct OverrideSpellDataEntry
     //uint32      unk_1;                                    // 12 possibly flag
 };
 
-// @author Selenium: 5.4 valid
 struct PvPDifficultyEntry
 {
     //uint32      id;                                       // 0        m_ID
@@ -1755,28 +1576,24 @@ struct PvPDifficultyEntry
     BattlegroundBracketId GetBracketId() const { return BattlegroundBracketId(bracketId); }
 };
 
-// @author Selenium: 5.4 valid
 struct QuestSortEntry
 {
     uint32      id;                                         // 0        m_ID
     //char*       name;                                     // 1        m_SortName_lang
 };
 
-// @author Selenium: 5.4 valid
 struct QuestXPEntry
 {
   uint32      id;
   uint32      Exp[10];
 };
 
-// @author Selenium: 5.4 valid
 struct QuestFactionRewEntry
 {
   uint32      id;
   int32       QuestRewFactionValue[10];
 };
 
-//@Todo : one field removed, find him
 struct RandomPropertiesPointsEntry
 {
     //uint32  Id;                                           // 0 hidden key
@@ -1786,7 +1603,6 @@ struct RandomPropertiesPointsEntry
     uint32    UncommonPropertiesPoints[5];                  // 12-16
 };
 
-// @author Selenium: 5.4 valid
 struct ScalingStatDistributionEntry
 {
     uint32  Id;                                             // 0
@@ -1796,7 +1612,6 @@ struct ScalingStatDistributionEntry
     uint32  MaxLevel;                                       // 22       m_maxlevel
 };
 
-// @author Selenium: todo for 5.4 valid
 struct ScalingStatValuesEntry
 {
     uint32 Id;                                              // 0
@@ -1813,28 +1628,6 @@ struct ScalingStatValuesEntry
     uint32 GetDPSAndDamageMultiplier(uint32 subClass, bool isCasterWeapon, float* damageMultiplier) const;
 };
 
-// @author Selenium: 5.4 valid
-//struct SkillRaceClassInfoEntry
-//{
-//    uint32    id;                                         // 0      m_ID
-//    uint32    skillId;                                    // 1      m_skillID
-//    uint32    raceMask;                                   // 2      m_raceMask
-//    uint32    classMask;                                  // 3      m_classMask
-//    uint32    flags;                                      // 4      m_flags
-//    uint32    reqLevel;                                   // 5      m_minLevel
-//    uint32    skillTierId;                                // 6      m_skillTierID
-//    uint32    skillCostID;                                // 7      m_skillCostIndex
-//};
-
-// 16 field removed
-//struct SkillTiersEntry
-//{
-//    uint32    id;                                         // 0      m_ID
-//    uint32    skillValue[16];                             // 1-17   m_cost
-//    uint32    maxSkillValue[16];                          // 18-32  m_valueMax
-//};
-
-// @author Selenium: 5.4 valid
 struct SkillLineEntry
 {
     uint32 id;                                              // 0    m_ID
@@ -1848,7 +1641,6 @@ struct SkillLineEntry
     //uint32 unk_1                                          // 8    Unknow, maybe flag ?
 };
 
-// @author Selenium: 5.4 valid
 struct SkillLineAbilityEntry
 {
     uint32    id;                                           // 0        m_ID
@@ -1866,7 +1658,6 @@ struct SkillLineAbilityEntry
     //uint32  unk_2                                         // 12       5.0.5
 };
 
-// @author Selenium: 5.4 valid
 struct SoundEntriesEntry
 {
     uint32    Id;                                           // 0        m_ID
@@ -1888,7 +1679,6 @@ struct SoundEntriesEntry
 };
 
 // SpecializationSpells.dbc
-// @author Selenium: 5.4 valid
 struct SpecializationSpellEntry
 {
     uint32  Id;                      // 0
@@ -1898,7 +1688,6 @@ struct SpecializationSpellEntry
     //uint32 Unk_1                   // 4  Always 0
 };
 
-// @author Selenium: 5.4 valid
 // SpellEffect.dbc
 struct SpellEffectEntry
 {
@@ -1932,10 +1721,9 @@ struct SpellEffectEntry
     //uint32  unk_flag_2                                    // 29        4.2.0 Flag
 };
 
-// @author Selenium: 5.4 valid
 struct SpellEffectScalingEntry
 {
-    //uint32    Id;                                         // 0
+    uint32    Id;                                         // 0
     float     Multiplier;                                   // 1
     float     RandomMultiplier;                             // 2
     float     OtherMultiplier;                              // 3
@@ -1948,7 +1736,6 @@ struct SpellEffectScalingEntry
 #define MAX_SPELL_REAGENTS 8
 
 // SpellAuraOptions.dbc
-// @author Selenium: 5.4 valid
 struct SpellAuraOptionsEntry
 {
     uint32    Id;                                           // 0   m_ID
@@ -1963,7 +1750,6 @@ struct SpellAuraOptionsEntry
 };
 
 // SpellAuraRestrictions.dbc/
-// @author Selenium: 5.4 valid
 struct SpellAuraRestrictionsEntry
 {
     //uint32    Id;                                         // 0       m_ID
@@ -1980,7 +1766,6 @@ struct SpellAuraRestrictionsEntry
 };
 
 // SpellCastingRequirements.dbc
-// @author Selenium: 5.4 valid
 struct SpellCastingRequirementsEntry
 {
     //uint32    Id;                                         // 0      m_ID
@@ -1995,7 +1780,6 @@ struct SpellCastingRequirementsEntry
 #define MAX_SPELL_TOTEMS            2
 
 // SpellTotems.dbc
-// @author Selenium: 5.4 valid
 struct SpellTotemsEntry
 {
     uint32    Id;                                             // 0  m_ID
@@ -2018,7 +1802,6 @@ struct SpellTotem
 typedef std::map<uint32, SpellTotem> SpellTotemMap;
 
 // Spell.dbc
-// @author Selenium: 5.4 valid
 struct SpellEntry
 {
     uint32    Id;                                           // 0       m_ID
@@ -2052,7 +1835,6 @@ struct SpellEntry
 };
 
 // SpellCategories.dbc
-// @author Selenium: 5.4 valid
 struct SpellCategoriesEntry
 {
     //uint32    Id;                                         // 0        m_ID
@@ -2068,7 +1850,6 @@ struct SpellCategoriesEntry
 };
 
 // SpellCategory.dbc
-// @author Selenium: 5.4 valid
 struct SpellCategoryEntry
 {
     uint32  CategoryId;
@@ -2085,7 +1866,6 @@ typedef std::list<const SpellEntry*> SpellSkillingList;
 typedef std::set<uint32> PetFamilySpellsSet;
 typedef std::map<uint32, PetFamilySpellsSet > PetFamilySpellsStore;
 
-// @author Selenium: 5.4 valid
 struct SpellCastTimesEntry
 {
     uint32    ID;                                           // 0
@@ -2094,14 +1874,12 @@ struct SpellCastTimesEntry
     //int32     MinCastTime;                                // 3 unsure
 };
 
-// @author Selenium: 5.4 valid
 struct SpellFocusObjectEntry
 {
     uint32    ID;                                           // 0
     //char*     Name;                                       // 1        m_name_lang
 };
 
-// @author Selenium: 5.4 valid
 struct SpellRadiusEntry
 {
     uint32    ID;                                           // 0
@@ -2111,7 +1889,6 @@ struct SpellRadiusEntry
     //float    unk_2                                        // 4
 };
 
-// @author Selenium: todo for 5.4 valid
 struct SpellRangeEntry
 {
     uint32    ID;                                           // 0
@@ -2125,7 +1902,6 @@ struct SpellRangeEntry
 };
 
 // SpellEquippedItems.dbc
-// @author Selenium: todo for 5.4 valid
 struct SpellEquippedItemsEntry
 {
     //uint32    Id;                                         // 0    m_ID
@@ -2137,7 +1913,6 @@ struct SpellEquippedItemsEntry
 };
 
 // SpellCooldowns.dbc
-// @author Selenium: todo for 5.4 valid
 struct SpellCooldownsEntry
 {
     //uint32    Id;                                         // 0    m_ID
@@ -2149,7 +1924,6 @@ struct SpellCooldownsEntry
 };
 
 // SpellClassOptions.dbc
-// @author Selenium: todo for 5.4 valid
 struct SpellClassOptionsEntry
 {
     //uint32    Id;                                         // 0       m_ID
@@ -2160,7 +1934,6 @@ struct SpellClassOptionsEntry
 };
 
 // SpellInterrupts.dbc
-// @author Selenium: todo for 5.4 valid
 struct SpellInterruptsEntry
 {
     //uint32    Id;                                         // 0       m_ID
@@ -2174,7 +1947,6 @@ struct SpellInterruptsEntry
 };
 
 // SpellLevels.dbc
-// @author Selenium: 5.4 valid
 struct SpellLevelsEntry
 {
     //uint32    Id;                                         // 0 m_ID
@@ -2186,7 +1958,6 @@ struct SpellLevelsEntry
 };
 
 //SpellMisc.dbc
-// @author Selenium: 5.4 valid
 struct SpellMiscEntry
 {
     uint32    Id;                                           // 0        m_ID
@@ -2217,7 +1988,6 @@ struct SpellMiscEntry
 };
 
 // SpellPower.dbc
-// @author Selenium: 5.4 valid
 struct SpellPowerEntry
 {
     uint32    Id;                                           // 0        m_ID
@@ -2235,7 +2005,6 @@ struct SpellPowerEntry
     //float     unk_7;                                      // 12
 };
 
-// @author Selenium: 5.4 valid
 struct SpellRuneCostEntry
 {
     uint32  ID;                                             // 0
@@ -2249,7 +2018,6 @@ struct SpellRuneCostEntry
 #define MAX_SHAPESHIFT_SPELLS 8
 
 //SpellShapeshiftForm.dbc
-// @author Selenium: 5.4 valid
 struct SpellShapeshiftFormEntry
 {
     uint32 ID;                                              // 0
@@ -2269,7 +2037,6 @@ struct SpellShapeshiftFormEntry
 };
 
 // SpellShapeshift.dbc
-// @author Selenium: 5.4 valid
 struct SpellShapeshiftEntry
 {
     uint32    Id;                                           // 0 - m_ID
@@ -2281,7 +2048,6 @@ struct SpellShapeshiftEntry
 };
 
 // SpellTargetRestrictions.dbc
-// @author Selenium: 5.4 valid
 struct SpellTargetRestrictionsEntry
 {
     uint32  Id;                                             // 0 m_ID
@@ -2296,7 +2062,7 @@ struct SpellTargetRestrictionsEntry
 };
 
 // SpellReagents.dbc
-// @author Selenium: todo for 5.4 valid one field removed
+//removed in 5.4.8
 struct SpellReagentsEntry
 {
     //uint32    Id;                                         // 0        m_ID
@@ -2325,7 +2091,6 @@ struct SpellReagent
 typedef std::map<uint32, SpellReagent> SpellReagentMap;
 
 // SpellScaling.dbc
-// @author Selenium: 5.4 valid
 struct SpellScalingEntry
 {
     //uint32    Id;                                         // 0        m_ID
@@ -2339,14 +2104,12 @@ struct SpellScalingEntry
     //uint32  unk505                                        // 8
 };
 
-// @author Selenium: 5.4 valid
 struct SpellDurationEntry
 {
     uint32    ID;
     int32     Duration[3];
 };
 
-// @author Selenium: todo for 5.4 valid
 struct SpellItemEnchantmentEntry
 {
     uint32      ID;                                         // 0        m_ID
@@ -2371,7 +2134,6 @@ struct SpellItemEnchantmentEntry
     // float    unk_6
 };
 
-//@todo
 struct SpellItemEnchantmentConditionEntry
 {
     uint32  ID;                                             // 0        m_ID
@@ -2383,8 +2145,6 @@ struct SpellItemEnchantmentConditionEntry
     //uint8   Logic[5]                                      // 25-30    m_logic[5]
 };
 
-
-// Removed ?
 struct SummonPropertiesEntry
 {
     uint32  Id;                                             // 0
@@ -2395,7 +2155,6 @@ struct SummonPropertiesEntry
     uint32  Flags;                                          // 5
 };
 
-// @author Selenium: 5.4 valid
 struct TalentEntry
 {
     uint32  Id;             // 0
@@ -2412,7 +2171,6 @@ struct TalentEntry
 
 };
 
-// @author Selenium: todo for 5.4 valid
 struct TaxiNodesEntry
 {
     uint32    ID;                                           // 0        m_ID
@@ -2428,7 +2186,6 @@ struct TaxiNodesEntry
     //float     unk_4                                       // 11
 };
 
-// @author Selenium: 5.4 valid
 struct TaxiPathEntry
 {
     uint32    ID;                                           // 0        m_ID
@@ -2437,7 +2194,6 @@ struct TaxiPathEntry
     uint32    price;                                        // 3        m_Cost
 };
 
-// @author Selenium: 5.4 valid
 struct TaxiPathNodeEntry
 {
     //uint32    ID;                                         // 0        m_ID
@@ -2453,7 +2209,6 @@ struct TaxiPathNodeEntry
     uint32    departureEventID;                             // 10       m_departureEventID
 };
 
-// @author Selenium: 5.4 valid
 struct TotemCategoryEntry
 {
     uint32    ID;                                           // 0
@@ -2465,41 +2220,6 @@ struct TotemCategoryEntry
 #define MAX_VEHICLE_SEATS 8
 
 struct VehicleEntry
-// 5.0.5 original
-//{
-//    uint32  m_ID;                                           // 0
-//    uint32  m_flags;                                        // 1
-//    //uint32                                                // 2
-//    float   m_turnSpeed;                                    // 3
-//    float   m_pitchSpeed;                                   // 4
-//    float   m_pitchMin;                                     // 5
-//    float   m_pitchMax;                                     // 6
-//    uint32  m_seatID[MAX_VEHICLE_SEATS];                    // 7-14
-//    float   m_mouseLookOffsetPitch;                         // 15
-//    float   m_cameraFadeDistScalarMin;                      // 16
-//    float   m_cameraFadeDistScalarMax;                      // 17
-//    float   m_cameraPitchOffset;                            // 18
-//    float   m_facingLimitRight;                             // 19
-//    float   m_facingLimitLeft;                              // 20
-//    float   m_msslTrgtTurnLingering;                        // 21
-//    float   m_msslTrgtPitchLingering;                       // 22
-//    float   m_msslTrgtMouseLingering;                       // 23
-//    float   m_msslTrgtEndOpacity;                           // 24
-//    float   m_msslTrgtArcSpeed;                             // 25
-//    float   m_msslTrgtArcRepeat;                            // 26
-//    float   m_msslTrgtArcWidth;                             // 27
-//    float   m_msslTrgtImpactRadius[2];                      // 28-29
-//    char* m_msslTrgtArcTexture;                             // 30
-//    char* m_msslTrgtImpactTexture;                          // 31
-//    char* m_msslTrgtImpactModel[2];                         // 32-33
-//    float   m_cameraYawOffset;                              // 34
-//    uint32  m_uiLocomotionType;                             // 35
-//    float   m_msslTrgtImpactTexRadius;                      // 36
-//    uint32  m_uiSeatIndicatorType;                          // 37
-//    uint32  m_powerType;                                    // 38, new in 3.1
-//                                                            // 39, new in 3.1
-//                                                            // 40, new in 3.1
-//};
 {
     uint32  m_ID;                                           // 0
     uint32  m_flags;                                        // 1
@@ -2534,7 +2254,6 @@ struct VehicleEntry
     //uint32    unk_2                                       // 40, new in 3.1
     //uint32    unk_3                                       // 41, new in 3.1
 };
-
 
 struct VehicleSeatEntry
 {
@@ -2614,7 +2333,6 @@ struct VehicleSeatEntry
     bool IsEjectable() const { return m_flagsB & VEHICLE_SEAT_FLAG_B_EJECTABLE; }
 };
 
-// @author Selenium: 5.4 valid
 struct WMOAreaTableEntry
 {
     uint32 Id;                                              // 0 index
@@ -2634,7 +2352,6 @@ struct WMOAreaTableEntry
     //uint32 unk_8;                                         // 14
 };
 
-// @author Selenium: 5.4 valid
 struct WorldMapAreaEntry
 {
     //uint32  ID;                                           // 0
@@ -2655,7 +2372,6 @@ struct WorldMapAreaEntry
 
 #define MAX_WORLD_MAP_OVERLAY_AREA_IDX 4
 
-// @author Selenium: 5.4 valid
 struct WorldMapOverlayEntry
 {
     uint32    ID;                                           // 0
@@ -2683,31 +2399,6 @@ struct WorldSafeLocsEntry
     //float   unk;                                          // 5
     //char*   name;                                         // 6 m_AreaName_lang
 };
-
-
-// @author Selenium: 5.4 valid
-//UNUSED ACTUALY
-/*
-struct WorldStateUI
-{
-    uint32    ID;                                           // 0
-    uint32    map_id;                                       // 1 Can be -1 to show up everywhere.
-    uint32    zone;                                         // 2 Can be zero for "everywhere".
-    uint32    phaseMask;                                    // 3 Phase this WorldState is avaliable in
-    uint32    icon;                                         // 4 The icon that is used in the interface.
-    //uint32    Unk_1                                       // 5 Only 0
-    char*     textureFilename;                              // 6
-    char*     WorldstateString;                             // 7 The worldstate text
-    char*     description;                                  // 8 Text shown when hovering mouse on icon
-    uint32    worldstateID;                                 // 9 This is the actual ID used
-    uint32    type;                                         // 10 0 = unknown, 1 = unknown, 2 = not shown in ui, 3 = wintergrasp
-    uint32    path_icon;                                    // 11
-    uint32    description_2;                                // 12
-    uint32    unk_2;                                        // 13
-    uint32    unk_3;                                        // 14 Used for some progress bars.
-    uint32    unk_4;                                        // 15 Unused (only 0)
-};
-*/
 
 // GCC have alternative #pragma pack() syntax and old gcc version not support pack(pop), also any gcc version not support it at some platform
 #if defined(__GNUC__)
