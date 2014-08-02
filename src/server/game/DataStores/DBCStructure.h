@@ -1805,7 +1805,8 @@ struct ScalingStatValuesEntry
     uint32 Spellpower;                                      // 9        Spell power for level
     uint32 StatMultiplier[5];                               // 10-14    Multiplier for ScalingStatDistribution
     uint32 Armor[8][4];                                     // 15-47    Armor for level
-    uint32 CloakArmor;                                      // 4        Armor for cloak
+    uint32 CloakArmor;                                      // 48       Armor for cloak
+	uint32 unk;                                             // 49 - Pandaria
 
     uint32 GetStatMultiplier(uint32 inventoryType) const;
     uint32 GetArmor(uint32 inventoryType, uint32 armorType) const;
@@ -1884,7 +1885,6 @@ struct SoundEntriesEntry
     //float     unk_2;                                      // 31       4.0.0   Radius ?
     //float     unk_3;                                      // 32       4.0.0   Radius ?
     //float     unk_4;                                      // 33       4.0.0   Radius ?
-    //uint32    unk_5;                                      // 34       5.0.5   Flag ?
 };
 
 // SpecializationSpells.dbc
@@ -1939,7 +1939,8 @@ struct SpellEffectScalingEntry
     float     Multiplier;                                   // 1
     float     RandomMultiplier;                             // 2
     float     OtherMultiplier;                              // 3
-    uint32    SpellEffectId;                                // 4
+    // float UnkMultiplier                                  // 4
+	uint32 SpellEffectId;                                   // 5
 };
 
 #define MAX_SPELL_EFFECTS 32
@@ -1950,13 +1951,15 @@ struct SpellEffectScalingEntry
 // @author Selenium: 5.4 valid
 struct SpellAuraOptionsEntry
 {
-    uint32    Id;                                           // 0       m_ID
-    uint32    StackAmount;                                  // 1       m_cumulativeAura
-    uint32    procChance;                                   // 2       m_procChance
-    uint32    procCharges;                                  // 3       m_procCharges
-    uint32    procFlags;                                    // 4       m_procTypeMask
-    //uint32    Unk_1                                       // 5
-    //uint32    unk_2                                       // 6       Flag
+    uint32    Id;                                           // 0   m_ID
+    //uint32  spellId;                                      // 1 - Pandaria
+    //uint32  unk0;                                         // 2 - Pandaria
+	uint32    StackAmount;                                  // 3   m_cumulativeAura
+	uint32    procChance;                                   // 4   m_procChance
+	uint32    procCharges;                                  // 5   m_procCharges
+	uint32    procFlags;                                    // 6   m_procTypeMask
+	//uint32  unk1                                          // 7 - Pandaria
+	//uint32  unk2                                          // 8 - Pandaria
 };
 
 // SpellAuraRestrictions.dbc/
@@ -2201,14 +2204,16 @@ struct SpellMiscEntry
     uint32    AttributesEx9;                                // 12       m_attributesExI
     uint32    AttributesEx10;                               // 13       m_attributesExI
     uint32    AttributesEx11;                               // 14       m_attributesExI
-    uint32    CastingTimeIndex;                             // 15       m_castingTimeIndex
-    uint32    DurationIndex;                                // 16       m_durationIndex
-    uint32    rangeIndex;                                   // 17       m_rangeIndex
-    float     speed;                                        // 18       m_speed
-    uint32    SpellVisual[2];                               // 19-20    m_spellVisualID
-    uint32    SpellIconID;                                  // 21       m_spellIconID
-    uint32    activeIconID;                                 // 22       m_activeIconID
-    uint32    SchoolMask;                                   // 23       m_schoolMask
+	uint32    AttributesEx12;                               // 15       m_attributesExL
+	uint32    AttributesEx13;                               // 16       m_attributesExM
+	uint32    CastingTimeIndex;                             // 17       m_castingTimeIndex
+	uint32    DurationIndex;                                // 18       m_durationIndex
+	uint32    rangeIndex;                                   // 19       m_rangeIndex
+	float     speed;                                        // 20       m_speed
+	uint32    SpellVisual[2];                               // 21-22    m_spellVisualID
+	uint32    SpellIconID;                                  // 23       m_spellIconID
+	uint32    activeIconID;                                 // 24       m_activeIconID
+	uint32    SchoolMask;                                   // 25       m_schoolMask
 };
 
 // SpellPower.dbc
