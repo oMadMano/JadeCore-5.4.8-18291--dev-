@@ -2163,37 +2163,49 @@ void WorldSession::HandleReadyForAccountDataTimes(WorldPacket& /*recvData*/)
     SendAccountDataTimes(GLOBAL_CACHE_MASK);
 }
 
-void WorldSession::SendSetPhaseShift(std::set<uint32> const& phaseIds, std::set<uint32> const& terrainswaps)
+void WorldSession::SendSetPhaseShift(std::set<uint32> const& phaseIds, std::set<uint32> const& terrainswaps, std::set<uint32> const& worldMapAreas)
 {
-    ObjectGuid guid = _player->GetGUID();
-    uint32 unkValue = 0;
+	ObjectGuid guid = _player->GetGUID();
 
-    WorldPacket data(SMSG_SET_PHASE_SHIFT, 1 + 8 + 4 + 4 + 4 + 4 + 2 * phaseIds.size() + 4 + terrainswaps.size() * 2);
+	WorldPacket data(SMSG_SET_PHASE_SHIFT, 1 + 8 + 2 * phaseIds.size() + 4 + 2 * terrainswaps.size() + 2 * terrainswaps.size() + 4);
+	data.WriteBit(guid[0]);
+	data.WriteBit(guid[3]);
+	data.WriteBit(guid[1]);
+	data.WriteBit(guid[4]);
+	data.WriteBit(guid[6]);
+	data.WriteBit(guid[2]);
+	data.WriteBit(guid[7]);
+	data.WriteBit(guid[5]);
+
+	data.WriteByteSeq(guid[4]);
+	data.WriteByteSeq(guid[3]);
+	data.WriteByteSeq(guid[2]);
 
     data << uint32(phaseIds.size()) * 2;        // Phase.dbc ids
     for (std::set<uint32>::const_iterator itr = phaseIds.begin(); itr != phaseIds.end(); ++itr)
         data << uint16(*itr); // Most of phase id on retail sniff have 0x8000 mask
 
-    // 0x8 or 0x10 is related to areatrigger, if we send flags 0x00 areatrigger doesn't work in some case
-    data << uint32(0x18); // flags, 0x18 most of time on retail sniff
+	data.WriteByteSeq(guid[0]);
+	data.WriteByteSeq(guid[6]);
 
     data << uint32(0);                          // Inactive terrain swaps, may switch with active terrain
     //for (uint8 i = 0; i < inactiveSwapsCount; ++i)
     //    data << uint16(0);
 
+	data.WriteByteSeq(guid[1]);
+	data.WriteByteSeq(guid[7]);
+
+	data << uint32(worldMapAreas.size()) * 2;     // WorldMapArea.dbc id (controls map display)
+	for (std::set<uint32>::const_iterator itr = worldMapAreas.begin(); itr != worldMapAreas.end(); ++itr)
+		data << uint16(*itr);
+
     data << uint32(terrainswaps.size()) * 2;    // Active terrain swaps, may switch with inactive terrain
     for (std::set<uint32>::const_iterator itr = terrainswaps.begin(); itr != terrainswaps.end(); ++itr)
         data << uint16(*itr);
 
-    data << uint32(unkValue);
-    // for(uint32 i = 0; i < unkValue; i++) 
-        //data << uint16(0); // WorldMapAreaId ?
-    
-    uint8 bitOrder[8] = {3, 7, 1, 6, 0, 4, 5, 2};
-    data.WriteBitInOrder(guid, bitOrder);
-    
-    uint8 byteOrder[8] = {4, 3, 0, 6, 2, 7, 5, 1};
-    data.WriteBytesSeq(guid, byteOrder);
+	data.WriteByteSeq(guid[5]);
+
+	data << uint32(phaseIds.size() ? 0 : 8);  // flags (not phasemask)
 
     SendPacket(&data);
 }
