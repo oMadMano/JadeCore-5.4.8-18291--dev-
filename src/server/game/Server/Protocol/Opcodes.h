@@ -124,7 +124,7 @@ enum Opcodes
     CMSG_CANCEL_MOUNT_AURA                            = 0x10E3, // 5.4.8
     CMSG_CANCEL_QUEUED_SPELL                          = 0x0000,
     CMSG_CANCEL_TEMP_ENCHANTMENT                      = 0x0000,
-    CMSG_CANCEL_TRADE                                 = 0x0000,
+    CMSG_CANCEL_TRADE                                 = 0x1941, // 5.4.8
     CMSG_CAST_SPELL                                   = 0x0206, // 5.4.8
     CMSG_CHANGEPLAYER_DIFFICULTY                      = 0x0000,
     CMSG_CHANGE_SEATS_ON_CONTROLLED_VEHICLE           = 0x0000,
@@ -465,7 +465,7 @@ enum Opcodes
     CMSG_RESET_FACTION_CHEAT                          = 0x0000,
     CMSG_RESET_INSTANCES                              = 0x0000,
     CMSG_RESURRECT_RESPONSE                           = 0x0000,
-    CMSG_RETURN_TO_GRAVEYARD                          = 0x0000,
+    CMSG_RETURN_TO_GRAVEYARD                          = 0x12EA, // 5.4.8
     CMSG_ROLE_POLL_BEGIN                              = 0x0000,
     CMSG_SAVE_CUF_PROFILES                            = 0x0000,
     CMSG_SAVE_PLAYER                                  = 0x0000,
