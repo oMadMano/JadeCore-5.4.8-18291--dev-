@@ -667,18 +667,14 @@ void WorldSession::HandleLootMethodOpcode(WorldPacket & recvData)
     ObjectGuid lootMaster;
     uint32 lootThreshold;
 
+	recvData >> lootThreshold;
     recvData >> lootMethod;
+    recvData.read_skip<uint32>();
 
-    recvData.read_skip<uint8>();
-
-    recvData >> lootThreshold;
-
-    uint8 bitOrder[8] = { 6, 4, 7, 2, 5, 0, 1, 3 };
+    uint8 bitOrder[8] = { 7, 1, 2, 0, 4, 5, 6, 3 };
     recvData.ReadBitInOrder(lootMaster, bitOrder);
-
-    recvData.FlushBits();
-
-    uint8 byteOrder[8] = { 4, 3, 0, 7, 6, 2, 1, 5 };
+	
+    uint8 byteOrder[8] = { 7, 1, 3, 4, 6, 5, 0, 2 };
     recvData.ReadBytesSeq(lootMaster, byteOrder);
 
     Group* group = GetPlayer()->GetGroup();
@@ -738,7 +734,8 @@ void WorldSession::HandleMinimapPingOpcode(WorldPacket& recvData)
 
     float x, y;
     recvData >> x;
-    recvData >> y;
+	recvData >> y;
+	recvData.read_skip<uint8>();
 
     //sLog->outDebug(LOG_FILTER_GENERAL, "Received opcode MSG_MINIMAP_PING X: %f, Y: %f", x, y);
 
@@ -746,10 +743,30 @@ void WorldSession::HandleMinimapPingOpcode(WorldPacket& recvData)
     /********************/
 
     // everything's fine, do it
-    WorldPacket data(MSG_MINIMAP_PING, (8+4+4));
-    data << uint64(GetPlayer()->GetGUID());
+	WorldPacket data(SMSG_MINIMAP_PONG, (1 + 8 + 4 + 4));
+	ObjectGuid guid = GetPlayer()->GetGUID();
+
+	data << float(y);
     data << float(x);
-    data << float(y);
+
+	data.WriteBit(guid[0]);
+	data.WriteBit(guid[5]);
+	data.WriteBit(guid[2]);
+	data.WriteBit(guid[7]);
+	data.WriteBit(guid[1]);
+	data.WriteBit(guid[3]);
+	data.WriteBit(guid[6]);
+	data.WriteBit(guid[4]);
+
+	data.WriteByteSeq(guid[6]);
+	data.WriteByteSeq(guid[5]);
+	data.WriteByteSeq(guid[7]);
+	data.WriteByteSeq(guid[2]);
+	data.WriteByteSeq(guid[0]);
+	data.WriteByteSeq(guid[3]);
+	data.WriteByteSeq(guid[1]);
+	data.WriteByteSeq(guid[4]);
+
     GetPlayer()->GetGroup()->BroadcastPacket(&data, true, -1, GetPlayer()->GetGUID());
 }
 
