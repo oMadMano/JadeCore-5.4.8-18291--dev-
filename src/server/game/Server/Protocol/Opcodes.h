@@ -1492,10 +1492,10 @@ enum Opcodes
     SMSG_STANDSTATE_UPDATE                            = 0x1C12, // 5.4.8
     SMSG_START_ELAPSED_TIMER                          = 0x0000,
     SMSG_START_ELAPSED_TIMERS                         = 0x0000,
-    SMSG_START_MIRROR_TIMER                           = 0x0000,
-    SMSG_START_TIMER                                  = 0x0000,
+	SMSG_START_MIRROR_TIMER                           = 0x0E12, // 5.4.8
+	SMSG_START_TIMER                                  = 0x0E3F, // 5.4.8
     SMSG_STOP_DANCE                                   = 0x0000,
-    SMSG_STOP_MIRROR_TIMER                            = 0x0000,
+	SMSG_STOP_MIRROR_TIMER                            = 0x1026, // 5.4.8
     SMSG_STOP_ELAPSED_TIMER                           = 0x0000,
     SMSG_STREAMING_MOVIE                              = 0x0000,
     SMSG_SUMMON_CANCEL                                = 0x0000,

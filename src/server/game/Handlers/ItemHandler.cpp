@@ -511,12 +511,6 @@ void WorldSession::HandleSellItemOpcode(WorldPacket & recvData)
 {
     sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: Received CMSG_SELL_ITEM");
 
-    time_t now = time(NULL);
-    if (now - timeLastSellItemOpcode < 5)
-        return;
-    else
-       timeLastSellItemOpcode = now;
-	
     ObjectGuid vendorGuid, itemGuid;
     uint32 count;
 
