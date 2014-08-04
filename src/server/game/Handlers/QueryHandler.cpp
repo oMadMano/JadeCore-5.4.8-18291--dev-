@@ -436,32 +436,32 @@ void WorldSession::HandleCorpseQueryOpcode(WorldPacket& /*recvData*/)
     }
     ObjectGuid guid = corpse->GetGUID();
 
-    WorldPacket data(SMSG_CORPSE_QUERY);
+	WorldPacket data(SMSG_CORPSE_QUERY, 9 + 1 + (4 * 5));
 
-    data << uint32(mapid);
-    data << float(x);
-    data << uint32(corpsemapid);
-    data << float(y);
-    data << float(z);
 
-    data.WriteBit(guid[5]);
-    data.WriteBit(guid[3]);
-    data.WriteBit(guid[4]);
-    data.WriteBit(guid[2]);
-    data.WriteBit(guid[6]);
-    data.WriteBit(guid[0]);
-    data.WriteBit(guid[7]);
-    data.WriteBit(guid[1]);
-    data.WriteBit(1);
+	data.WriteBit(guid[0]);
+	data.WriteBit(guid[3]);
+	data.WriteBit(guid[2]);
+	data.WriteBit(1); // Corpse Found
+	data.WriteBit(guid[5]);
+	data.WriteBit(guid[4]);
+	data.WriteBit(guid[1]);
+	data.WriteBit(guid[7]);
+	data.WriteBit(guid[6]);
 
-    data.WriteByteSeq(guid[4]);
-    data.WriteByteSeq(guid[5]);
-    data.WriteByteSeq(guid[2]);
-    data.WriteByteSeq(guid[0]);
-    data.WriteByteSeq(guid[1]);
-    data.WriteByteSeq(guid[6]);
-    data.WriteByteSeq(guid[7]);
-    data.WriteByteSeq(guid[3]);
+	data.WriteByteSeq(guid[5]);
+	data << float(z);
+	data.WriteByteSeq(guid[1]);
+	data << uint32(corpsemapid);
+	data.WriteByteSeq(guid[6]);
+	data.WriteByteSeq(guid[4]);
+	data << float(x);
+	data.WriteByteSeq(guid[3]);
+	data.WriteByteSeq(guid[7]);
+	data.WriteByteSeq(guid[2]);
+	data.WriteByteSeq(guid[0]);
+	data << int32(mapid);
+	data << float(y);
 
     SendPacket(&data);
 }
@@ -601,8 +601,8 @@ void WorldSession::HandleCorpseMapPositionQuery(WorldPacket& recvData)
 {
     sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: Recv CMSG_CORPSE_MAP_POSITION_QUERY");
 
-    // Read guid, useless
-    recvData.rfinish();
+	uint32 transportGuidLow;
+	recvData >> transportGuidLow;
 
     WorldPacket data(SMSG_CORPSE_MAP_POSITION_QUERY_RESPONSE, 4+4+4+4);
     data << float(0);
