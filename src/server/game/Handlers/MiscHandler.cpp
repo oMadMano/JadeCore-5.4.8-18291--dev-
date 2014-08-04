@@ -671,7 +671,7 @@ void WorldSession::HandleReturnToGraveyard(WorldPacket& /*recvPacket*/)
 {
     if (GetPlayer()->isAlive() || !GetPlayer()->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_GHOST))
         return;
-    //TODO: unk32, unk32
+
     GetPlayer()->RepopAtGraveyard();
 }
 
@@ -724,7 +724,6 @@ void WorldSession::HandleAddFriendOpcode(WorldPacket& recvData)
     std::string friendNote;
 
     recvData >> friendName;
-
     recvData >> friendNote;
 
     if (!normalizePlayerName(friendName))
@@ -921,13 +920,25 @@ void WorldSession::HandleReclaimCorpseOpcode(WorldPacket& recvData)
 
     ObjectGuid guid;
 
-    uint8 bitsOrder[8] = { 0, 1, 2, 6, 5, 7, 3, 4 };
-    recvData.ReadBitInOrder(guid, bitsOrder);
+	guid[1] = recvData.ReadBit();
+	guid[5] = recvData.ReadBit();
+	guid[7] = recvData.ReadBit();
+	guid[2] = recvData.ReadBit();
+	guid[6] = recvData.ReadBit();
+	guid[3] = recvData.ReadBit();
+	guid[0] = recvData.ReadBit();
+	guid[4] = recvData.ReadBit();
 
-    recvData.FlushBits();
+	recvData.FlushBits();
 
-    uint8 bytesOrder[8] = { 4, 1, 6, 7, 2, 3, 5, 0 };
-    recvData.ReadBytesSeq(guid, bytesOrder);
+	recvData.ReadByteSeq(guid[2]);
+	recvData.ReadByteSeq(guid[5]);
+	recvData.ReadByteSeq(guid[4]);
+	recvData.ReadByteSeq(guid[6]);
+	recvData.ReadByteSeq(guid[1]);
+	recvData.ReadByteSeq(guid[0]);
+	recvData.ReadByteSeq(guid[7]);
+	recvData.ReadByteSeq(guid[3]);
 
     if (GetPlayer()->isAlive())
         return;

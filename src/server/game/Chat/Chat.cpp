@@ -710,7 +710,7 @@ void ChatHandler::FillMessageData(WorldPacket* data, WorldSession* session, uint
     bool bit5264 = false;
     bool sendRealmId = true;
 
-    data->Initialize(SMSG_MESSAGE_CHAT, 100);                   // guess size
+    data->Initialize(SMSG_MESSAGE_CHAT);                   // guess size
 	
     ObjectGuid target(target_guid);
     ObjectGuid source(speaker ? speaker->GetGUID() : 0);
@@ -774,8 +774,6 @@ void ChatHandler::FillMessageData(WorldPacket* data, WorldSession* session, uint
     data->WriteBit(unkGuid2[3]);
     data->WriteBit(unkGuid2[6]);
 
-    data->FlushBits();
-
     data->WriteByteSeq(unkGuid2[4]);
     data->WriteByteSeq(unkGuid2[5]);
     data->WriteByteSeq(unkGuid2[7]);
@@ -814,19 +812,11 @@ void ChatHandler::FillMessageData(WorldPacket* data, WorldSession* session, uint
     data->WriteByteSeq(source[1]);
     data->WriteByteSeq(source[0]);
 
+	if (language)
     *data << uint8(language);
+
+	if (messageLength)
     data->WriteString(message);
-
-    if (language)
-    {
-        if ((type != CHAT_MSG_CHANNEL && type != CHAT_MSG_WHISPER) || language == LANG_ADDON)
-            *data << uint32(language);
-        else
-            *data << uint32(LANG_UNIVERSAL);
-    }
-
-    if (messageLength)
-        data->append(message, messageLength);
 
     if (bit5264)
         *data << uint32(0);                                         // unk uint32

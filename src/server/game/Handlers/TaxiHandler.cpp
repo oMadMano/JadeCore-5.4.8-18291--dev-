@@ -133,6 +133,8 @@ void WorldSession::SendTaxiMenu(Creature* unit)
 	data.WriteBit(Guid[5]);
 	data.WriteBits(TaxiMaskSize, 24);
 
+	data.FlushBits();
+
 	data.WriteByteSeq(Guid[0]);
 	data.WriteByteSeq(Guid[3]);
 	data << uint32(curloc);

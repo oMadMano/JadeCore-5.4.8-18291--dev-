@@ -674,16 +674,16 @@ void Channel::Say(uint64 p, const char *what, uint32 lang)
 
         WorldPacket data(SMSG_MESSAGE_CHAT, 1 + 4 + 8 + 4 + m_name.size() + 1 + 8 + 4 + messageLength + 1);
 		//5.4.8
-		
-		
         data << (uint8)CHAT_MSG_CHANNEL;
         data << (uint32)lang;
         data << p;
-        data << m_name;
         data << p;
-        data << what;
-        data << messageLength;
-        data << uint16(player ? player->GetChatTag() : 0);
+		data << what;
+		data << uint16(player ? player->GetChatTag() : 0);
+		data << uint32(0);                                  // 2.1.0
+		data << uint32(0);                                  // 2.1.0
+		data << messageLength;
+		data << m_name;
 		
 		//////////////////////////////////////
 		/*

@@ -14367,19 +14367,19 @@ void Unit::SetSpeed(UnitMoveType mtype, float rate, bool forced)
             {
                 data.Initialize(SMSG_MOVE_SET_RUN_SPEED, 1 + 8 + 4 + 4);
     
-                uint8 bitOrder[8] = {6, 5, 0, 1, 2, 4, 3, 7};
+                uint8 bitOrder[8] = {1, 7, 4, 2, 5, 3, 6, 0};
                 data.WriteBitInOrder(guid, bitOrder);
 
-                data.WriteByteSeq(guid[4]);
+				data.WriteByteSeq(guid[1]);
+				data << uint32(0);
                 data.WriteByteSeq(guid[7]);
-                data.WriteByteSeq(guid[1]);
                 data.WriteByteSeq(guid[3]);
-                data << float(GetSpeed(mtype));
-                data.WriteByteSeq(guid[0]);
-                data.WriteByteSeq(guid[5]);
+				data.WriteByteSeq(guid[0]);
+				data << float(GetSpeed(mtype));
                 data.WriteByteSeq(guid[2]);
+                data.WriteByteSeq(guid[4]);
                 data.WriteByteSeq(guid[6]);
-                data << uint32(0);
+                data.WriteByteSeq(guid[5]);
                 break;
             }
             case MOVE_RUN_BACK:
@@ -14449,20 +14449,20 @@ void Unit::SetSpeed(UnitMoveType mtype, float rate, bool forced)
             case MOVE_FLIGHT:
             {
                 data.Initialize(SMSG_MOVE_SET_FLIGHT_SPEED, 1 + 8 + 4 + 4);
-    
-                uint8 bitOrder[8] = {1, 5, 4, 0, 6, 3, 2, 7};
+
+				data << float(GetSpeed(mtype));
+				data << uint32(0);
+                uint8 bitOrder[8] = {6, 5, 0, 4, 1, 7, 3, 2};
                 data.WriteBitInOrder(guid, bitOrder);
 
-                data.WriteByteSeq(guid[5]);
-                data.WriteByteSeq(guid[1]);
-                data.WriteByteSeq(guid[3]);
-                data.WriteByteSeq(guid[7]);
                 data.WriteByteSeq(guid[0]);
-                data.WriteByteSeq(guid[2]);
-                data << uint32(0);
-                data.WriteByteSeq(guid[6]);
+                data.WriteByteSeq(guid[7]);
                 data.WriteByteSeq(guid[4]);
-                data << float(GetSpeed(mtype));
+                data.WriteByteSeq(guid[5]);
+                data.WriteByteSeq(guid[6]);
+                data.WriteByteSeq(guid[2]);
+                data.WriteByteSeq(guid[3]);
+                data.WriteByteSeq(guid[1]);
                 break;
             }
             case MOVE_FLIGHT_BACK:
@@ -18062,18 +18062,18 @@ void Unit::SendMoveRoot(uint32 value)
     ObjectGuid guid = GetGUID();
     WorldPacket data(SMSG_MOVE_ROOT, 1 + 8 + 4);
     
-    uint8 bitOrder[8] = {2, 7, 0, 6, 5, 3, 1, 4};
+    uint8 bitOrder[8] = {0, 3, 4, 1, 5, 2, 6, 7};
     data.WriteBitInOrder(guid, bitOrder);
 
-    data.WriteByteSeq(guid[2]);
-    data.WriteByteSeq(guid[0]);
-    data.WriteByteSeq(guid[1]);
-    data.WriteByteSeq(guid[7]);
     data.WriteByteSeq(guid[4]);
+    data.WriteByteSeq(guid[7]);
+    data.WriteByteSeq(guid[1]);
+    data.WriteByteSeq(guid[2]);
+    data.WriteByteSeq(guid[3]);
     data.WriteByteSeq(guid[5]);
     data << uint32(value);
+    data.WriteByteSeq(guid[0]);
     data.WriteByteSeq(guid[3]);
-    data.WriteByteSeq(guid[6]);
 
     SendMessageToSet(&data, true);
 }
@@ -18082,13 +18082,19 @@ void Unit::SendMoveUnroot(uint32 value)
 {
     ObjectGuid guid = GetGUID();
     WorldPacket data(SMSG_MOVE_UNROOT, 1 + 8 + 4);
-    data << uint32(value);
     
-    uint8 bitOrder[8] = {2, 7, 1, 3, 5, 6, 4, 0};
+    uint8 bitOrder[8] = {3, 5, 7, 1, 0, 2, 4, 6};
     data.WriteBitInOrder(guid, bitOrder);
 
-    uint8 byteOrder[8] = {4, 2, 1, 6, 5, 7, 0, 3};
-    data.WriteBytesSeq(guid, byteOrder);
+	data.WriteByteSeq(guid[0]);
+	data.WriteByteSeq(guid[7]);
+	data << uint32(value);
+	data.WriteByteSeq(guid[5]);
+	data.WriteByteSeq(guid[4]);
+	data.WriteByteSeq(guid[2]);
+	data.WriteByteSeq(guid[1]);
+	data.WriteByteSeq(guid[3]);
+	data.WriteByteSeq(guid[6]);
 
     SendMessageToSet(&data, true);
 }
