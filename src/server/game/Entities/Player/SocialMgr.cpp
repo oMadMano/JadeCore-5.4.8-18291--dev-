@@ -169,6 +169,7 @@ void PlayerSocial::SendSocialList(Player* player)
         data << uint32(0);
         data << uint32(itr->second.Flags);                  // player flag (0x1 = Friend, 0x2 = Ignored, 0x4 = Muted)
         data << itr->second.Note;                           // string note
+
         if (itr->second.Flags & SOCIAL_FLAG_FRIEND)         // if IsFriend()
         {
             data << uint8(itr->second.Status);              // online/offline/etc?
