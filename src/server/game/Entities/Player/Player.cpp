@@ -6143,9 +6143,9 @@ void Player::BuildPlayerRepop()
 void Player::ResurrectPlayer(float restore_percent, bool applySickness)
 {
     WorldPacket data(SMSG_DEATH_RELEASE_LOC, 4*4);          // remove spirit healer position
+	data << uint32(-1);
     data << float(0);
     data << float(0);
-    data << uint32(-1);
     data << float(0);
     GetSession()->SendPacket(&data);
 
@@ -6583,9 +6583,9 @@ void Player::RepopAtGraveyard()
         if (isDead())                                        // not send if alive, because it used in TeleportTo()
         {
             WorldPacket data(SMSG_DEATH_RELEASE_LOC, 4*4);  // show spirit healer position on minimap
-            data << ClosestGrave->y;
-            data << ClosestGrave->z;
-            data << ClosestGrave->map_id;
+			data << ClosestGrave->map_id;
+			data << ClosestGrave->y;
+			data << ClosestGrave->z;
             data << ClosestGrave->x;
             GetSession()->SendPacket(&data);
         }
@@ -22636,15 +22636,35 @@ void Player::PetSpellInitialize()
     sLog->outDebug(LOG_FILTER_PETS, "Pet Spells Groups");
 
     CharmInfo* charmInfo = pet->GetCharmInfo();
+	ObjectGuid Guid = pet->GetGUID();
 
     WorldPacket data(SMSG_PET_SPELLS, 8+2+4+4+4*MAX_UNIT_ACTION_BAR_INDEX+1+1);
-    data << uint64(pet->GetGUID());
-    data << uint16(pet->GetCreatureTemplate()->family);         // creature family (required for pet talents)
-    data << uint16(0); // unknown
-    data << uint32(pet->GetDuration());
-    data << uint8(pet->GetReactState());
-    data << uint8(charmInfo->GetCommandState());
-    data << uint16(0); // Flags, mostly unknown
+
+	data.WriteBit(Guid[7]);
+	data.WriteBit(Guid[4]);
+	data << uint8(pet->GetReactState());
+	data << uint8(charmInfo->GetCommandState());
+	data.WriteBit(Guid[2]);
+	data << uint8(0);
+	data.WriteBit(Guid[5]);
+	data.WriteBit(Guid[3]);
+	data.WriteBit(Guid[6]);
+	data.WriteBit(Guid[0]);
+	data.WriteBit(Guid[1]);
+
+	data.WriteByteSeq(Guid[2]);
+	data.WriteByteSeq(Guid[7]);
+	data.WriteByteSeq(Guid[0]);
+	data.WriteByteSeq(Guid[3]);
+	data << uint16(pet->GetCreatureTemplate()->family);         // creature family (required for pet talents)
+	data << uint16(0); // Flags, mostly unknown
+	data.WriteByteSeq(Guid[1]);
+	data.WriteByteSeq(Guid[4]);
+	data.WriteByteSeq(Guid[6]);
+	data << uint32(pet->GetDuration());
+	data.WriteByteSeq(Guid[5]);
+	data << uint8(0);
+
 
     // action bar loop
     charmInfo->BuildActionBar(&data);
@@ -22681,8 +22701,8 @@ void Player::PetSpellInitialize()
         if (!spellInfo)
         {
             data << uint32(0);
-            data << uint16(0);
-            data << uint32(0);
+			data << uint32(0);
+			data << uint16(0);
             data << uint32(0);
             continue;
         }
@@ -22693,21 +22713,19 @@ void Player::PetSpellInitialize()
         CreatureSpellCooldowns::const_iterator categoryitr = pet->m_CreatureCategoryCooldowns.find(spellInfo->Category);
         if (categoryitr != pet->m_CreatureCategoryCooldowns.end())
         {
-            time_t categoryCooldown = (categoryitr->second > curTime) ? (categoryitr->second - curTime) * IN_MILLISECONDS : 0;
+			time_t categoryCooldown = (categoryitr->second > curTime) ? (categoryitr->second - curTime) * IN_MILLISECONDS : 0;
+			data << uint32(cooldown);               // spell cooldown
             data << uint16(spellInfo->Category);    // spell category
-            data << uint32(cooldown);               // spell cooldown
             data << uint32(categoryCooldown);       // category cooldown
         }
         else
-        {
+		{
+			data << uint32(cooldown);
             data << uint16(0);
-            data << uint32(cooldown);
             data << uint32(0);
         }
     }
-
-    data << uint8(0); //unknown
-
+	
     GetSession()->SendPacket(&data);
 }
 
@@ -28740,35 +28758,34 @@ void Player::SendMovementSetCanFly(bool apply)
     {
         data.Initialize(SMSG_MOVE_SET_CAN_FLY, 1 + 8 + 4);
 
-        uint8 bitOrder[8] = {0, 1, 6, 5, 7, 2, 3, 4};
+        uint8 bitOrder[8] = {6, 1, 4, 0, 3, 7, 5, 2};
         data.WriteBitInOrder(guid, bitOrder);
-
-        data << uint32(0);          //! movement counter
-
+		
         data.WriteByteSeq(guid[4]);
-        data.WriteByteSeq(guid[1]);
-        data.WriteByteSeq(guid[2]);
-        data.WriteByteSeq(guid[0]);
-        data.WriteByteSeq(guid[1]);
-        data.WriteByteSeq(guid[5]);
-        data.WriteByteSeq(guid[7]);
+		data.WriteByteSeq(guid[2]);
+		data << uint32(0);          //! movement counter
         data.WriteByteSeq(guid[6]);
+        data.WriteByteSeq(guid[3]);
+        data.WriteByteSeq(guid[1]);
+        data.WriteByteSeq(guid[0]);
+        data.WriteByteSeq(guid[7]);
+        data.WriteByteSeq(guid[5]);
     }
     else
     {
         data.Initialize(SMSG_MOVE_UNSET_CAN_FLY, 1 + 8 + 4);
 
-        uint8 bitOrder[8] = {4, 3, 2, 0, 1, 5, 7, 6};
+        uint8 bitOrder[8] = {6, 5, 0, 4, 3, 7, 2, 1};
         data.WriteBitInOrder(guid, bitOrder);
 
-        data.WriteByteSeq(guid[1]);
-        data.WriteByteSeq(guid[5]);
-        data.WriteByteSeq(guid[6]);
-        data << uint32(0);          //! movement counter
-        data.WriteByteSeq(guid[7]);
         data.WriteByteSeq(guid[4]);
+        data.WriteByteSeq(guid[5]);
+        data.WriteByteSeq(guid[7]);
+        data << uint32(0);          //! movement counter
+        data.WriteByteSeq(guid[6]);
         data.WriteByteSeq(guid[2]);
         data.WriteByteSeq(guid[3]);
+        data.WriteByteSeq(guid[1]);
         data.WriteByteSeq(guid[0]);
         
     }

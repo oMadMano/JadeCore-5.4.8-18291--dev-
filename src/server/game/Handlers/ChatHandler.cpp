@@ -685,8 +685,8 @@ void WorldSession::HandleEmoteOpcode(WorldPacket & recvData)
     if (!GetPlayer()->isAlive() || GetPlayer()->HasUnitState(UNIT_STATE_DIED))
         return;
 
-    uint32 emote;
-    recvData >> emote;
+    uint32 emote, unk;
+    recvData >> emote, unk;
     sScriptMgr->OnPlayerEmote(GetPlayer(), emote);
     GetPlayer()->HandleEmoteCommand(emote);
 }

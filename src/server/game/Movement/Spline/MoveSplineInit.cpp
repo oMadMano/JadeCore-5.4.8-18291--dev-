@@ -141,21 +141,24 @@ namespace Movement
         move_spline.onTransport = (unit.GetTransGUID() != 0);
 
         uint32 moveFlags = unit.m_movementInfo.GetMovementFlags();
-        if (args.flags.walkmode)
-            moveFlags |= MOVEMENTFLAG_WALKING;
-        else
-            moveFlags &= ~MOVEMENTFLAG_WALKING;
-
+        
         moveFlags |= MOVEMENTFLAG_FORWARD;
 
-        if (!args.HasVelocity)
+		if (moveFlags & MOVEMENTFLAG_ROOT)
+			moveFlags &= ~MOVEMENTFLAG_MASK_MOVING;
+
+		if (!args.HasVelocity)
+		{
+			if (args.flags.walkmode)
+				moveFlags |= MOVEMENTFLAG_WALKING;
+			else
+				moveFlags &= ~MOVEMENTFLAG_WALKING;
+
             args.velocity = unit.GetSpeed(SelectSpeedType(moveFlags));
+		}
 
         if (!args.Validate())
             return;
-
-        if (moveFlags & MOVEMENTFLAG_ROOT)
-            moveFlags &= ~MOVEMENTFLAG_MASK_MOVING;
 
         unit.m_movementInfo.SetMovementFlags(moveFlags);
         move_spline.Initialize(args);
@@ -168,13 +171,6 @@ namespace Movement
         uint32 sendSplineFlags = splineflags & ~MoveSplineFlag::Mask_No_Monster_Move;
         int8 seat = unit.GetTransSeat();
 
-        bool hasUnk1 = false;
-        bool hasUnk2 = false;
-        bool hasUnk3 = false;
-        bool unk4 = false;
-        uint32 unkCounter = 0;
-        uint32 packedWPcount = splineflags & MoveSplineFlag::UncompressedPath ? 0 : move_spline.spline.getPointCount() - 3;
-        uint32 WPcount = !packedWPcount ? move_spline.spline.getPointCount() - 2 : 1;
         uint8 splineType = 0;
 
         switch (splineflags & MoveSplineFlag::Mask_Final_Facing)
@@ -192,8 +188,7 @@ namespace Movement
                 splineType = MonsterMoveNormal;
                 break;
         }
-		//5.4.8
-		
+
         data << float(move_spline.spline.getPoint(move_spline.spline.first()).z);
         data << float(move_spline.spline.getPoint(move_spline.spline.first()).x);
         data << uint32(move_spline.GetId());
@@ -202,7 +197,7 @@ namespace Movement
         data << float(0.0f); // Most likely transport Z
         data << float(0.0f); // Most likely transport X
 		
-        data.WriteBit(!splineflags.parabolic); // Parabolic speed // esi+4Ch
+        data.WriteBit(1); // Parabolic speed // esi+4Ch
         data.WriteBit(moverGUID[0]);
         data.WriteBits(splineType, 3);
 		
@@ -329,14 +324,6 @@ namespace Movement
     {
         MoveSpline& move_spline = *unit.movespline;
 
-        if (force)
-        {
-            args.flags = MoveSplineFlag::Done;
-            unit.m_movementInfo.RemoveMovementFlag(MOVEMENTFLAG_FORWARD);
-            move_spline.Initialize(args);
-            return;
-        }
-
         // No need to stop if we are not moving
         if (move_spline.Finalized())
             return;
@@ -349,15 +336,14 @@ namespace Movement
         WorldPacket data(SMSG_MONSTER_MOVE, 64);
         ObjectGuid moverGUID = unit.GetGUID();
         ObjectGuid transportGUID = unit.GetTransGUID();
-		//5.4.8
 		
         data << float(loc.z);
         data << float(loc.x);
         data << uint32(true); //SplineId
         data << float(loc.y);
-        data << float(0.0f); // Most likely transport Y
-        data << float(0.0f); // Most likely transport Z
-        data << float(0.0f); // Most likely transport X
+        data << float(0.f); // Most likely transport Y
+        data << float(0.f); // Most likely transport Z
+        data << float(0.f); // Most likely transport X
 		
         data.WriteBit(1); // Parabolic speed // esi+4Ch
         data.WriteBit(moverGUID[0]);

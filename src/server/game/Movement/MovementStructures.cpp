@@ -5488,8 +5488,8 @@ MovementStatusElements const* GetMovementStatusElementsSequence(Opcodes opcode)
         //    return SplineMoveSetPitchRate;
         //case SMSG_MOVE_SET_WALK_SPEED:
         //    return MoveSetWalkSpeed;
-        case SMSG_MOVE_SET_RUN_SPEED:
-            return MoveSetRunSpeed;
+			//case SMSG_MOVE_SET_RUN_SPEED:
+			//    return MoveSetRunSpeed;
         //case SMSG_MOVE_SET_RUN_BACK_SPEED:
         //    return MoveSetRunBackSpeed;
         //case SMSG_MOVE_SET_SWIM_SPEED:
@@ -5498,8 +5498,8 @@ MovementStatusElements const* GetMovementStatusElementsSequence(Opcodes opcode)
         //    return MoveSetSwimBackSpeed;
         //case SMSG_MOVE_SET_TURN_RATE:
         //    return MoveSetTurnRate;
-        case SMSG_MOVE_SET_FLIGHT_SPEED:
-           return MoveSetFlightSpeed;
+			//case SMSG_MOVE_SET_FLIGHT_SPEED:
+			//   return MoveSetFlightSpeed;
         //case SMSG_MOVE_SET_FLIGHT_BACK_SPEED:
         //    return MoveSetFlightBackSpeed;
         //case SMSG_MOVE_SET_PITCH_RATE:
@@ -5536,10 +5536,10 @@ MovementStatusElements const* GetMovementStatusElementsSequence(Opcodes opcode)
         //    return SplineMoveRoot;
         //case SMSG_SPLINE_MOVE_UNROOT:
         //    return SplineMoveUnroot;
-        case SMSG_MOVE_SET_CAN_FLY:
-            return MoveSetCanFly;
-        case SMSG_MOVE_UNSET_CAN_FLY:
-            return MoveUnsetCanFly;
+			//case SMSG_MOVE_SET_CAN_FLY:
+			//    return MoveSetCanFly;
+			//case SMSG_MOVE_UNSET_CAN_FLY:
+			//    return MoveUnsetCanFly;
         //case SMSG_MOVE_SET_HOVER:
         //    return MoveSetHover;
         //case SMSG_MOVE_UNSET_HOVER:
@@ -5552,9 +5552,9 @@ MovementStatusElements const* GetMovementStatusElementsSequence(Opcodes opcode)
         //    return MoveFeatherFall;
         //case SMSG_MOVE_NORMAL_FALL:
         //    return MoveNormalFall;
-        case SMSG_MOVE_ROOT:
-            return MoveRoot;
-        case SMSG_MOVE_UNROOT:
+			//case SMSG_MOVE_ROOT:
+			//    return MoveRoot;
+			//case SMSG_MOVE_UNROOT:
             return MoveUnroot;
         //case CMSG_CHANGE_SEATS_ON_CONTROLLED_VEHICLE:
         //    return ChangeSeatsOnControlledVehicle;
