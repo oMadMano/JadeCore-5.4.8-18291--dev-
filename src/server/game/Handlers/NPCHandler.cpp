@@ -578,8 +578,25 @@ void WorldSession::SendSpiritResurrect()
 
 void WorldSession::HandleBinderActivateOpcode(WorldPacket& recvData)
 {
-    uint64 npcGUID;
-    recvData >> npcGUID;
+	ObjectGuid npcGuid;
+
+	npcGuid[0] = recvData.ReadBit();
+	npcGuid[5] = recvData.ReadBit();
+	npcGuid[4] = recvData.ReadBit();
+	npcGuid[7] = recvData.ReadBit();
+	npcGuid[6] = recvData.ReadBit();
+	npcGuid[2] = recvData.ReadBit();
+	npcGuid[1] = recvData.ReadBit();
+	npcGuid[3] = recvData.ReadBit();
+
+	recvData.ReadByteSeq(npcGuid[0]);
+	recvData.ReadByteSeq(npcGuid[4]);
+	recvData.ReadByteSeq(npcGuid[2]);
+	recvData.ReadByteSeq(npcGuid[3]);
+	recvData.ReadByteSeq(npcGuid[7]);
+	recvData.ReadByteSeq(npcGuid[1]);
+	recvData.ReadByteSeq(npcGuid[5]);
+	recvData.ReadByteSeq(npcGuid[6]);
 
     if (!GetPlayer()->IsInWorld() || !GetPlayer()->isAlive())
         return;

@@ -92,7 +92,7 @@ enum Opcodes
     CMSG_BATTLEMASTER_JOIN_ARENA                      = 0x0000,
     CMSG_BATTLEMASTER_JOIN_RATED                      = 0x0000,
     CMSG_BEGIN_TRADE                                  = 0x0000,
-    CMSG_BINDER_ACTIVATE                              = 0x0000,
+	CMSG_BINDER_ACTIVATE                              = 0x1248, // 5.4.8
     CMSG_BOT_DETECTED2                                = 0x0000,
     CMSG_BUG                                          = 0x0000,
     CMSG_BUSY_TRADE                                   = 0x0000,
