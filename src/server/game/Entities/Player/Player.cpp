@@ -2400,57 +2400,57 @@ void Player::SendTeleportPacket(Position &oldPos)
     ObjectGuid transGuid = GetTransGUID();
     bool unk = false;
 
-    WorldPacket data(SMSG_MOVE_TELEPORT, 38);
-    data << float(GetOrientation());
-    data << float(GetPositionY());
-    data << float(GetPositionX());
-    data << float(GetPositionZMinusOffset());
-    data << uint32(0);                  //  mask ? 0x180 on retail sniff
+	WorldPacket data(SMSG_MOVE_TELEPORT, 1 + 8 + 1 + 8 + 1 + 4 + 4 + 4 + 4);
+	data.WriteBit(guid[0]);
+	data.WriteBit(guid[6]);
+	data.WriteBit(guid[5]);
+	data.WriteBit(guid[7]);
+	data.WriteBit(guid[2]);
+	data.WriteBit(uint64(transGuid));
+	data.WriteBit(guid[4]);
 
-    data.WriteBit(unk);                 // unk bit
-    data.WriteBit(guid[2]);
-    data.WriteBit(guid[3]);
-    data.WriteBit(uint64(transGuid));   // has transport
-    data.WriteBit(guid[7]);
-    data.WriteBit(guid[1]);
+	if (transGuid)
+	{
+		data.WriteBit(transGuid[1]);
+		data.WriteBit(transGuid[3]);
+		data.WriteBit(transGuid[6]);
+		data.WriteBit(transGuid[4]);
+		data.WriteBit(transGuid[5]);
+		data.WriteBit(transGuid[2]);
+		data.WriteBit(transGuid[0]);
+		data.WriteBit(transGuid[7]);
+	}
 
-    if (transGuid)
-    {
-        uint8 bitOrder[8] = {2, 5, 3, 6, 1, 4, 7, 0};
-        data.WriteBitInOrder(transGuid, bitOrder);
-    }
+	data.WriteBit(guid[3]);
+	data.WriteBit(guid[1]);
+	data.WriteBit(0);
+	data.FlushBits();
 
-    data.WriteBit(guid[4]);
+	if (transGuid)
+	{
+		data.WriteByteSeq(transGuid[4]);
+		data.WriteByteSeq(transGuid[3]);
+		data.WriteByteSeq(transGuid[7]);
+		data.WriteByteSeq(transGuid[1]);
+		data.WriteByteSeq(transGuid[6]);
+		data.WriteByteSeq(transGuid[0]);
+		data.WriteByteSeq(transGuid[2]);
+		data.WriteByteSeq(transGuid[5]);
+	}
+	data.WriteByteSeq(guid[4]);
+	data.WriteByteSeq(guid[7]);
+	data << float(GetPositionZMinusOffset());
+	data << float(GetPositionY());
+	data.WriteByteSeq(guid[2]);
+	data.WriteByteSeq(guid[3]);
+	data.WriteByteSeq(guid[5]);
+	data << float(GetPositionX());
+	data << uint32(0); // counter
+	data.WriteByteSeq(guid[0]);
+	data.WriteByteSeq(guid[6]);
+	data.WriteByteSeq(guid[1]);
+	data << float(GetOrientation());
 
-    if (unk)
-    {
-        data.WriteBit(0);
-        data.WriteBit(0);
-    }
-
-    data.WriteBit(guid[6]);
-    data.WriteBit(guid[0]);
-    data.WriteBit(guid[5]);
-    data.WriteByteSeq(guid[7]);
-
-    if (transGuid)
-    {
-        uint8 byteOrder[8] = {3, 0, 1, 7, 2, 6, 5, 4};
-        data.WriteBytesSeq(transGuid, byteOrder);
-    }
-
-    data.WriteByteSeq(guid[5]);
-    data.WriteByteSeq(guid[4]);
-    data.WriteByteSeq(guid[0]);
-    data.WriteByteSeq(guid[2]);
-    data.WriteByteSeq(guid[3]);
-    data.WriteByteSeq(guid[1]);
-    data.WriteByteSeq(guid[6]);
-
-    if (unk)
-        data << uint8(0);           // unk, maybe seat ?
-
-    Relocate(&oldPos);
     SendDirectMessage(&data);
 }
 
@@ -2668,8 +2668,7 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
                 
                 if (m_transport)
                 {
-                    data  << GetMapId() << m_transport->GetEntry();
-                    data.WriteBit(1);         // has transport
+                    data << GetMapId() << m_transport->GetEntry();
                 }
 
                 GetSession()->SendPacket(&data);
@@ -2700,12 +2699,12 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
 
             if (!GetSession()->PlayerLogout())
             {
-                WorldPacket data(SMSG_NEW_WORLD, 4 + 4 + 4 + 4 + 4);
-                data << float(m_teleport_dest.GetPositionY());
+				WorldPacket data(SMSG_NEW_WORLD, 4 + 4 + 4 + 4 + 4);
+				data << float(m_teleport_dest.GetPositionX());
+				data << uint32(mapid);
+				data << float(m_teleport_dest.GetPositionY());
+				data << float(m_teleport_dest.GetPositionZ());
                 data << float(m_teleport_dest.GetOrientation());
-                data << float(m_teleport_dest.GetPositionZ());
-                data << float(m_teleport_dest.GetPositionX());
-                data << uint32(mapid);
                 GetSession()->SendPacket(&data);
                 SendSavedInstances();
             }
@@ -4209,13 +4208,13 @@ void Player::SendInitialSpells()
             continue;
 
         data << uint32(itr->first);
-        data << uint16(0);                                  // it's not slot id
 
         ++spellCount;
     }
 
-    data.put<uint16>(countPos, spellCount);                  // write real count value
-
+	data.PutBits(countPos, spellCount, 22);
+	data.FlushBits();
+	/*
     uint16 spellCooldowns = m_spellCooldowns.size();
 
     data << uint16(spellCooldowns);
@@ -4251,7 +4250,7 @@ void Player::SendInitialSpells()
             data << uint32(0);                              // category cooldown
         }
     }
-
+	*/
     GetSession()->SendPacket(&data);
 
     sLog->outDebug(LOG_FILTER_NETWORKIO, "CHARACTER: Sent Initial Spells");
@@ -4904,10 +4903,15 @@ void Player::learnSpell(uint32 spell_id, bool dependent)
     // prevent duplicated entires in spell book, also not send if not in world (loading)
     if (learning && IsInWorld())
     {
-        WorldPacket data(SMSG_LEARNED_SPELL);
+        WorldPacket data(SMSG_LEARNED_SPELL, 8);
+		uint32 SpellCount = 1;
+
+		data.WriteBits(SpellCount, 22);  // count of spell_id to send.
         data.WriteBit(0);       // auto push in action bar (ReadBit() != 0)
-        data.WriteBits(1, 22);  // count of spell_id to send.
-        data << uint32(spell_id);
+
+		for (uint32 i = 0; i < SpellCount; ++i)
+			data << uint32(spell_id);
+
         GetSession()->SendPacket(&data);
     }
 
@@ -13687,11 +13691,32 @@ Item* Player::EquipItem(uint16 pos, Item* pItem, bool update)
 
                     GetGlobalCooldownMgr().AddGlobalCooldown(spellProto, m_weaponChangeTimer);
 
-                    WorldPacket data(SMSG_SPELL_COOLDOWN, 8+1+4);
-                    data << uint64(GetGUID());
-                    data << uint8(1);
-                    data << uint32(cooldownSpell);
-                    data << uint32(0);
+					ObjectGuid guid = GetGUID();
+
+					WorldPacket data(SMSG_SPELL_COOLDOWN, 9 + 3 + 8);
+					data.WriteBit(guid[0]);
+					data.WriteBit(guid[6]);
+					data.WriteBit(1); // Missing flags
+					data.WriteBit(guid[7]);
+					data.WriteBit(guid[3]);
+					data.WriteBit(guid[1]);
+					data.WriteBit(guid[5]);
+					size_t bitpos = data.bitwpos();
+					data.WriteBits(1, 21);
+					data.WriteBit(guid[2]);
+					data.WriteBit(guid[4]);
+
+					data << uint32(cooldownSpell);
+					data << uint32(0);
+					data.WriteByteSeq(guid[5]);
+					data.WriteByteSeq(guid[3]);
+					data.WriteByteSeq(guid[7]);
+					data.WriteByteSeq(guid[4]);
+					data.WriteByteSeq(guid[1]);
+					data.WriteByteSeq(guid[0]);
+					data.WriteByteSeq(guid[2]);
+					data.WriteByteSeq(guid[6]);
+
                     GetSession()->SendPacket(&data);
                 }
             }
@@ -23524,11 +23549,24 @@ void Player::ContinueTaxiFlight()
 
 void Player::ProhibitSpellSchool(SpellSchoolMask idSchoolMask, uint32 unTimeMs)
 {
-                                                            // last check 2.0.10
-    WorldPacket data(SMSG_SPELL_COOLDOWN, 8+1+m_spells.size()*8);
-    data << uint64(GetGUID());
-    data << uint8(0x0);                                     // flags (0x1, 0x2)
-    time_t curTime = time(NULL);
+	time_t curTime = time(NULL);
+	ObjectGuid guid = GetGUID();
+	uint32 Count = 0;
+
+	WorldPacket data(SMSG_SPELL_COOLDOWN, 9 + 3 + m_spells.size() * 8);
+	data.WriteBit(guid[0]);
+	data.WriteBit(guid[6]);
+	data.WriteBit(1); // Missing flags
+	data.WriteBit(guid[7]);
+	data.WriteBit(guid[3]);
+	data.WriteBit(guid[1]);
+	data.WriteBit(guid[5]);
+	size_t Bitpos = data.bitwpos();
+	data.WriteBits(0, 21);
+	data.WriteBit(guid[2]);
+	data.WriteBit(guid[4]);
+	data.FlushBits();
+
     for (PlayerSpellMap::const_iterator itr = m_spells.begin(); itr != m_spells.end(); ++itr)
     {
         if (itr->second->state == PLAYERSPELL_REMOVED)
@@ -23552,9 +23590,21 @@ void Player::ProhibitSpellSchool(SpellSchoolMask idSchoolMask, uint32 unTimeMs)
         {
             data << uint32(unSpellId);
             data << uint32(unTimeMs);                       // in m.secs
+			Count++;
             AddSpellCooldown(unSpellId, 0, curTime + unTimeMs/IN_MILLISECONDS);
         }
-    }
+	}
+
+	data.PutBits(Bitpos, Count, 21);
+	data.WriteByteSeq(guid[5]);
+	data.WriteByteSeq(guid[3]);
+	data.WriteByteSeq(guid[7]);
+	data.WriteByteSeq(guid[4]);
+	data.WriteByteSeq(guid[1]);
+	data.WriteByteSeq(guid[0]);
+	data.WriteByteSeq(guid[2]);
+	data.WriteByteSeq(guid[6]);
+
     GetSession()->SendPacket(&data);
 }
 
@@ -24342,8 +24392,8 @@ void Player::AddSpellCooldown(uint32 spellid, uint32 itemid, time_t end_time)
 
 void Player::SendCategoryCooldown(uint32 categoryId, int32 cooldown)
 {
-    WorldPacket data(SMSG_SPELL_CATEGORY_COOLDOWN, 12);
-    data.WriteBits(1, 23);
+    WorldPacket data(SMSG_SPELL_CATEGORY_COOLDOWN, 11);
+    data.WriteBits(1, 21);
     data << uint32(cooldown);
     data << uint32(categoryId);
     SendDirectMessage(&data);
@@ -25107,12 +25157,32 @@ void Player::SendCooldownAtLogin()
 {
     time_t curTime = time(NULL);
     for (SpellCooldowns::const_iterator itr = GetSpellCooldownMap().begin(); itr != GetSpellCooldownMap().end(); ++itr)
-    {
-        WorldPacket data(SMSG_SPELL_COOLDOWN, 8+1+4+4);
-        data << uint64(GetGUID());
-        data << uint8(1);
-        data << uint32(itr->first);
-        data << uint32(0);
+	{
+		ObjectGuid guid = GetGUID();
+		WorldPacket data(SMSG_SPELL_COOLDOWN, 9 + 3 + 8);
+		data.WriteBit(guid[0]);
+		data.WriteBit(guid[6]);
+		data.WriteBit(1); // Missing flags
+		data.WriteBit(guid[7]);
+		data.WriteBit(guid[3]);
+		data.WriteBit(guid[1]);
+		data.WriteBit(guid[5]);
+		size_t bitpos = data.bitwpos();
+		data.WriteBits(1, 21);
+		data.WriteBit(guid[2]);
+		data.WriteBit(guid[4]);
+
+		data << uint32(itr->first);
+		data << uint32(0);
+		data.WriteByteSeq(guid[5]);
+		data.WriteByteSeq(guid[3]);
+		data.WriteByteSeq(guid[7]);
+		data.WriteByteSeq(guid[4]);
+		data.WriteByteSeq(guid[1]);
+		data.WriteByteSeq(guid[0]);
+		data.WriteByteSeq(guid[2]);
+		data.WriteByteSeq(guid[6]);
+
         GetSession()->SendPacket(&data);
     }
 }

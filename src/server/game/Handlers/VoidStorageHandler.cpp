@@ -42,10 +42,10 @@ void WorldSession::HandleVoidStorageUnlock(WorldPacket& recvData)
 
     ObjectGuid npcGuid;
 
-    uint8 bitOrder[8] = {5, 3, 4, 2, 1, 7, 0, 6};
+    uint8 bitOrder[8] = {3, 1, 5, 6, 4, 0, 7, 2};
     recvData.ReadBitInOrder(npcGuid, bitOrder);
 
-    uint8 byteOrder[8] = {4, 5, 7, 3, 0, 6, 2, 1};
+    uint8 byteOrder[8] = {4, 3, 6, 2, 1, 5, 7, 0};
     recvData.ReadBytesSeq(npcGuid, byteOrder);
 
     Creature* unit = player->GetNPCIfCanInteractWith(npcGuid, UNIT_NPC_FLAG_VAULTKEEPER);
@@ -72,12 +72,12 @@ void WorldSession::HandleVoidStorageQuery(WorldPacket& recvData)
 
     ObjectGuid npcGuid;
 
-    uint8 bitOrder[8] = {0, 1, 3, 4, 2, 5, 7, 6};
+    uint8 bitOrder[8] = {1, 5, 6, 0, 7, 2, 3, 4};
     recvData.ReadBitInOrder(npcGuid, bitOrder);
 
     recvData.FlushBits();
 
-    uint8 byteOrder[8] = {7, 6, 2, 4, 3, 0, 1, 5};
+    uint8 byteOrder[8] = {1, 6, 4, 3, 7, 0, 2, 5};
     recvData.ReadBytesSeq(npcGuid, byteOrder);
 
     Creature* unit = player->GetNPCIfCanInteractWith(npcGuid, UNIT_NPC_FLAG_VAULTKEEPER);
@@ -169,15 +169,11 @@ void WorldSession::HandleVoidStorageTransfer(WorldPacket& recvData)
     sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: Received CMSG_VOID_STORAGE_TRANSFER");
     Player* player = GetPlayer();
 
-    // Read everything
-
     ObjectGuid npcGuid;
     
-    npcGuid[0] = recvData.ReadBit();
-    npcGuid[6] = recvData.ReadBit();
-    npcGuid[3] = recvData.ReadBit();
-    uint32 countWithdraw = recvData.ReadBits(26);
-    uint32 countDeposit = recvData.ReadBits(26);
+    npcGuid[7] = recvData.ReadBit();
+    npcGuid[4] = recvData.ReadBit();
+    uint32 countWithdraw = recvData.ReadBits(24);
 
     if (countWithdraw > 9)
     {
@@ -187,9 +183,11 @@ void WorldSession::HandleVoidStorageTransfer(WorldPacket& recvData)
 
     std::vector<ObjectGuid> itemIds(countWithdraw);
 
-    uint8 bitOrder[8] = {5, 1, 3, 4, 7, 0, 6, 2};
+    uint8 bitOrder[8] = {0, 3, 6, 5, 4, 2, 1, 7};
     for (uint32 i = 0; i < countWithdraw; ++i)
         recvData.ReadBitInOrder(itemIds[i], bitOrder);
+
+	uint32 countDeposit = recvData.ReadBits(24);
 
     if (countDeposit > 9)
     {
@@ -199,35 +197,36 @@ void WorldSession::HandleVoidStorageTransfer(WorldPacket& recvData)
 
     std::vector<ObjectGuid> itemGuids(countDeposit);
 
-    uint8 bitOrder2[8] = {2, 5, 7, 1, 3, 0, 4, 6};
+    uint8 bitOrder2[8] = {4, 0, 5, 7, 6, 1, 2, 3};
     for (uint32 i = 0; i < countDeposit; ++i)
         recvData.ReadBitInOrder(itemGuids[i], bitOrder2);
     
-    npcGuid[4] = recvData.ReadBit();
-    npcGuid[7] = recvData.ReadBit();
-    npcGuid[1] = recvData.ReadBit();
-    npcGuid[2] = recvData.ReadBit();
-    npcGuid[5] = recvData.ReadBit();
+    npcGuid[6] = recvData.ReadBit();
+    npcGuid[0] = recvData.ReadBit();
+    npcGuid[3] = recvData.ReadBit();
+	npcGuid[1] = recvData.ReadBit();
+	npcGuid[2] = recvData.ReadBit();
+	npcGuid[5] = recvData.ReadBit();
 
     recvData.FlushBits();
 
-    uint8 byteOrder[8] = {2, 0, 4, 6, 5, 1, 7, 3};
+    uint8 byteOrder[8] = {5, 6, 3, 4, 1, 7, 2, 0};
     for (uint32 i = 0; i < countWithdraw; ++i)
         recvData.ReadBytesSeq(itemIds[i], byteOrder);
 
-    recvData.ReadByteSeq(npcGuid[3]);
-    recvData.ReadByteSeq(npcGuid[6]);
+    recvData.ReadByteSeq(npcGuid[5]);
     
-    uint8 byteOrder2[8] = {7, 1, 4, 5, 2, 6, 3, 0};
+    uint8 byteOrder2[8] = {0, 4, 1, 2, 6, 3, 7, 5};
     for (uint32 i = 0; i < countDeposit; ++i)
         recvData.ReadBytesSeq(itemGuids[i], byteOrder2);
 
     recvData.ReadByteSeq(npcGuid[1]);
-    recvData.ReadByteSeq(npcGuid[0]);
-    recvData.ReadByteSeq(npcGuid[5]);
-    recvData.ReadByteSeq(npcGuid[4]);
-    recvData.ReadByteSeq(npcGuid[2]);
     recvData.ReadByteSeq(npcGuid[7]);
+    recvData.ReadByteSeq(npcGuid[4]);
+    recvData.ReadByteSeq(npcGuid[3]);
+	recvData.ReadByteSeq(npcGuid[2]);
+	recvData.ReadByteSeq(npcGuid[0]);
+	recvData.ReadByteSeq(npcGuid[6]);
 
     Creature* unit = player->GetNPCIfCanInteractWith(npcGuid, UNIT_NPC_FLAG_VAULTKEEPER);
     if (!unit)
@@ -426,41 +425,41 @@ void WorldSession::HandleVoidSwapItem(WorldPacket& recvData)
 
     recvData >> newSlot;
 
-    itemId[4] = recvData.ReadBit();
-    npcGuid[2] = recvData.ReadBit();
-    itemId[3] = recvData.ReadBit();
+	npcGuid[6] = recvData.ReadBit();
+	itemId[4] = recvData.ReadBit();
+	itemId[7] = recvData.ReadBit();
+	itemId[3] = recvData.ReadBit();
+	itemId[2] = recvData.ReadBit();
+	npcGuid[4] = recvData.ReadBit();
+	npcGuid[2] = recvData.ReadBit();
     itemId[0] = recvData.ReadBit();
-    npcGuid[0] = recvData.ReadBit();
-    npcGuid[4] = recvData.ReadBit();
     itemId[1] = recvData.ReadBit();
-    npcGuid[3] = recvData.ReadBit();
-    npcGuid[1] = recvData.ReadBit();
-    npcGuid[5] = recvData.ReadBit();
-    itemId[6] = recvData.ReadBit();
-    itemId[2] = recvData.ReadBit();
     npcGuid[7] = recvData.ReadBit();
+    npcGuid[1] = recvData.ReadBit();
+    itemId[6] = recvData.ReadBit();
+    npcGuid[3] = recvData.ReadBit();
+    npcGuid[5] = recvData.ReadBit();
     itemId[5] = recvData.ReadBit();
-    itemId[7] = recvData.ReadBit();
-    npcGuid[6] = recvData.ReadBit();
+    npcGuid[0] = recvData.ReadBit();
 
     recvData.FlushBits();
-    
-    recvData.ReadByteSeq(itemId[2]);
-    recvData.ReadByteSeq(itemId[3]);
-    recvData.ReadByteSeq(npcGuid[0]);
-    recvData.ReadByteSeq(npcGuid[3]);
-    recvData.ReadByteSeq(npcGuid[1]);
+
+	recvData.ReadByteSeq(npcGuid[3]);
+	recvData.ReadByteSeq(npcGuid[5]);
+	recvData.ReadByteSeq(itemId[6]);
+	recvData.ReadByteSeq(npcGuid[4]);
     recvData.ReadByteSeq(itemId[4]);
-    recvData.ReadByteSeq(npcGuid[6]);
-    recvData.ReadByteSeq(npcGuid[2]);
-    recvData.ReadByteSeq(npcGuid[7]);
-    recvData.ReadByteSeq(npcGuid[5]);
+	recvData.ReadByteSeq(npcGuid[0]);
+	recvData.ReadByteSeq(itemId[5]);
+	recvData.ReadByteSeq(itemId[7]);
+	recvData.ReadByteSeq(npcGuid[7]);
+	recvData.ReadByteSeq(npcGuid[2]);
+	recvData.ReadByteSeq(npcGuid[1]);
+	recvData.ReadByteSeq(itemId[1]);
+	recvData.ReadByteSeq(itemId[3]);
+	recvData.ReadByteSeq(npcGuid[6]);
     recvData.ReadByteSeq(itemId[0]);
-    recvData.ReadByteSeq(itemId[7]);
-    recvData.ReadByteSeq(npcGuid[4]);
-    recvData.ReadByteSeq(itemId[1]);
-    recvData.ReadByteSeq(itemId[5]);
-    recvData.ReadByteSeq(itemId[6]);
+    recvData.ReadByteSeq(itemId[2]);
 
     Creature* unit = player->GetNPCIfCanInteractWith(npcGuid, UNIT_NPC_FLAG_VAULTKEEPER);
     if (!unit)

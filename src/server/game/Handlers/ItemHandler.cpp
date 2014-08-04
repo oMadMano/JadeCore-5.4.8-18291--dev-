@@ -1624,10 +1624,10 @@ void WorldSession::HandleItemRefundInfoRequest(WorldPacket& recvData)
 
     ObjectGuid guid;
 
-    uint8 bitOrder[8] = {2, 3, 7, 4, 0, 5, 6, 1};
+    uint8 bitOrder[8] = {1, 0, 3, 2, 7, 4, 5, 6};
     recvData.ReadBitInOrder(guid, bitOrder);
 
-    uint8 byteOrder[8] = {0, 2, 6, 1, 7, 3, 4, 5};
+    uint8 byteOrder[8] = {3, 7, 5, 1, 0, 6, 4, 2};
     recvData.ReadBytesSeq(guid, byteOrder);
 
     Item* item = _player->GetItemByGuid(guid);

@@ -1404,11 +1404,23 @@ void Pet::_LoadSpellCooldowns(PreparedQueryResult resultCooldown, bool login)
 
     if (result)
     {
-        time_t curTime = time(NULL);
+		time_t curTime = time(NULL);
+		ObjectGuid Guid = GetGUID();
+		uint32 Count = 0;
 
-        WorldPacket data(SMSG_SPELL_COOLDOWN, size_t(8+1+result->GetRowCount()*8));
-        data << GetGUID();
+		WorldPacket data(SMSG_SPELL_COOLDOWN, 9 + 1 + result->GetRowCount() * 8);
+		data.WriteBit(Guid[0]);
+		data.WriteBit(Guid[6]);
         data << uint8(0x0);                                 // flags (0x1, 0x2)
+		data.WriteBit(Guid[7]);
+		data.WriteBit(Guid[3]);
+		data.WriteBit(Guid[1]);
+		data.WriteBit(Guid[5]);
+		size_t Bitpos = data.bitwpos();
+		data.WriteBits(0, 21);
+		data.WriteBit(Guid[2]);
+		data.WriteBit(Guid[4]);
+		data.FlushBits();
 
         do
         {
@@ -1430,11 +1442,22 @@ void Pet::_LoadSpellCooldowns(PreparedQueryResult resultCooldown, bool login)
             data << uint32(spell_id);
             data << uint32(uint32(db_time-curTime)*IN_MILLISECONDS);
 
-            _AddCreatureSpellCooldown(spell_id, db_time);
+			_AddCreatureSpellCooldown(spell_id, db_time);
+			Count++;
 
             sLog->outDebug(LOG_FILTER_PETS, "Pet (Number: %u) spell %u cooldown loaded (%u secs).", m_charmInfo->GetPetNumber(), spell_id, uint32(db_time-curTime));
         }
         while (result->NextRow());
+
+		data.PutBits(Bitpos, Count, 21);
+		data.WriteByteSeq(Guid[5]);
+		data.WriteByteSeq(Guid[3]);
+		data.WriteByteSeq(Guid[7]);
+		data.WriteByteSeq(Guid[4]);
+		data.WriteByteSeq(Guid[1]);
+		data.WriteByteSeq(Guid[0]);
+		data.WriteByteSeq(Guid[2]);
+		data.WriteByteSeq(Guid[6]);
 
         if (!m_CreatureSpellCooldowns.empty() && GetOwner())
             ((Player*)GetOwner())->GetSession()->SendPacket(&data);

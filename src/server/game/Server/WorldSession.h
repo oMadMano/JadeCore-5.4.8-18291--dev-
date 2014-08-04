@@ -551,9 +551,9 @@ class WorldSession
         void HandleRequestAccountData(WorldPacket& recvPacket);
         void HandleSetActionButtonOpcode(WorldPacket& recvPacket);
 
-        void HandleGameObjectUseOpcode(WorldPacket& recPacket);
+        void HandleGameObjectUseOpcode(WorldPacket& recData);
         void HandleMeetingStoneInfo(WorldPacket& recPacket);
-        void HandleGameobjectReportUse(WorldPacket& recvPacket);
+        void HandleGameobjectReportUse(WorldPacket& recvData);
 
         void HandleNameQueryOpcode(WorldPacket& recvPacket);
         void HandleRealmNameQueryOpcode(WorldPacket& recvPacket);

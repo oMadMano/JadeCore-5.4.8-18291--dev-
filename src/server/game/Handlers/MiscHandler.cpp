@@ -1145,8 +1145,10 @@ void WorldSession::HandleUpdateAccountData(WorldPacket& recvData)
 {
     sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: Received CMSG_UPDATE_ACCOUNT_DATA");
 
-    uint32 type, timestamp, decompressedSize;
-    recvData >> type >> timestamp >> decompressedSize;
+	uint32 type, timestamp, decompressedSize;
+	recvData >> decompressedSize;
+	recvData >> timestamp;
+	recvData >> type;
 
     sLog->outDebug(LOG_FILTER_NETWORKIO, "UAD: type %u, time %u, decompressedSize %u", type, timestamp, decompressedSize);
 
@@ -1228,24 +1230,29 @@ void WorldSession::HandleRequestAccountData(WorldPacket& recvData)
     WorldPacket data(SMSG_UPDATE_ACCOUNT_DATA, 4+4+4+3+3+5+8+destSize);
     ObjectGuid playerGuid = _player ? _player->GetGUID() : 0;
 
-    data << uint32(destSize);                               // compressed length
-    data << uint32(adata->Time);                            // unix time
-    data << uint32(size);                                   // decompressed length
-
-    data.WriteBit(playerGuid[4]);
-    data.WriteBit(playerGuid[2]);
-    data.WriteBit(playerGuid[0]);
-    data.WriteBits(type, 3);
-    data.WriteBit(playerGuid[7]);
+	data.WriteBits(type, 3);
     data.WriteBit(playerGuid[5]);
     data.WriteBit(playerGuid[1]);
     data.WriteBit(playerGuid[3]);
+    data.WriteBit(playerGuid[7]);
+    data.WriteBit(playerGuid[0]);
+    data.WriteBit(playerGuid[4]);
+    data.WriteBit(playerGuid[2]);
     data.WriteBit(playerGuid[6]);
 
-    uint8 byteOrder[8] = { 4, 2, 7, 5, 3, 1, 6, 0 };
-    data.WriteBytesSeq(playerGuid, byteOrder);
-
-    data.append(dest);                                      // compressed data
+	data.WriteByteSeq(playerGuid[3]);
+	data.WriteByteSeq(playerGuid[1]);
+	data.WriteByteSeq(playerGuid[5]);
+	data << uint32(size);                                   // decompressed length
+	data << uint32(destSize);                               // compressed length
+	data.append(dest);                                      // compressed data
+	data.WriteByteSeq(playerGuid[7]);
+	data.WriteByteSeq(playerGuid[4]);
+	data.WriteByteSeq(playerGuid[0]);
+	data.WriteByteSeq(playerGuid[6]);
+	data.WriteByteSeq(playerGuid[2]);
+	data << uint32(adata->Time);                            // unix time
+	
     SendPacket(&data);
 }
 
@@ -1326,10 +1333,10 @@ void WorldSession::HandleMoveTimeSkippedOpcode(WorldPacket& recvData)
     uint32 time;
     recvData >> time;
 
-    uint8 bitOrder[8] = {7, 1, 2, 6, 3, 4, 5, 0};
+    uint8 bitOrder[8] = {5, 0, 7, 4, 1, 2, 6, 3};
     recvData.ReadBitInOrder(guid, bitOrder);
 
-    uint8 byteOrder[8] = {1, 4, 2, 7, 0, 5, 6, 3};
+    uint8 byteOrder[8] = {7, 2, 0, 6, 1, 5, 3, 4};
     recvData.ReadBytesSeq(guid, byteOrder);
 
     //TODO!
@@ -1873,13 +1880,10 @@ void WorldSession::HandleRealmSplitOpcode(WorldPacket& recvData)
 {
     sLog->outDebug(LOG_FILTER_NETWORKIO, "CMSG_REALM_SPLIT");
 
-    uint32 unk;
     std::string split_date = "01/01/01";
-    recvData >> unk;
 
     WorldPacket data(SMSG_REALM_SPLIT);
     data.WriteBits(split_date.size(), 7);
-    data << unk;
     data << uint32(0x00000000);                             // realm split state
     data << split_date;
     SendPacket(&data);
@@ -2422,10 +2426,10 @@ void WorldSession::HandleObjectUpdateFailedOpcode(WorldPacket& recvPacket)
 {
     ObjectGuid guid;
 
-    uint8 bitOrder[8] = {2, 1, 0, 6, 3, 7, 4, 5};
+    uint8 bitOrder[8] = {3, 5, 6, 0, 1, 2, 7, 4};
     recvPacket.ReadBitInOrder(guid, bitOrder);
 
-    uint8 byteOrder[8] = {7, 5, 1, 6, 4, 2, 3, 0};
+    uint8 byteOrder[8] = {0, 6, 5, 7, 2, 1, 3, 4};
     recvPacket.ReadBytesSeq(guid, byteOrder);
 
     WorldObject* obj = ObjectAccessor::GetWorldObject(*GetPlayer(), guid);

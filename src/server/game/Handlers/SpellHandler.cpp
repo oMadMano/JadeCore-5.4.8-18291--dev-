@@ -614,27 +614,27 @@ void WorldSession::HandleGameObjectUseOpcode(WorldPacket& recvData)
         obj->Use(_player);
 }
 
-void WorldSession::HandleGameobjectReportUse(WorldPacket& recvPacket)
+void WorldSession::HandleGameobjectReportUse(WorldPacket& recvData)
 {
     ObjectGuid guid;
 
-    guid[5] = recvPacket.ReadBit();
-    guid[3] = recvPacket.ReadBit();
-    guid[1] = recvPacket.ReadBit();
-    guid[4] = recvPacket.ReadBit();
-    guid[6] = recvPacket.ReadBit();
-    guid[7] = recvPacket.ReadBit();
-    guid[2] = recvPacket.ReadBit();
-    guid[0] = recvPacket.ReadBit();
+	guid[5] = recvData.ReadBit();
+	guid[3] = recvData.ReadBit();
+	guid[1] = recvData.ReadBit();
+	guid[4] = recvData.ReadBit();
+	guid[6] = recvData.ReadBit();
+	guid[7] = recvData.ReadBit();
+	guid[2] = recvData.ReadBit();
+	guid[0] = recvData.ReadBit();
 
-    recvPacket.ReadByteSeq(guid[6]);
-    recvPacket.ReadByteSeq(guid[1]);
-    recvPacket.ReadByteSeq(guid[5]);
-    recvPacket.ReadByteSeq(guid[3]);
-    recvPacket.ReadByteSeq(guid[4]);
-    recvPacket.ReadByteSeq(guid[0]);
-    recvPacket.ReadByteSeq(guid[2]);
-    recvPacket.ReadByteSeq(guid[7]);
+	recvData.ReadByteSeq(guid[6]);
+	recvData.ReadByteSeq(guid[1]);
+	recvData.ReadByteSeq(guid[5]);
+	recvData.ReadByteSeq(guid[3]);
+	recvData.ReadByteSeq(guid[4]);
+	recvData.ReadByteSeq(guid[0]);
+	recvData.ReadByteSeq(guid[2]);
+	recvData.ReadByteSeq(guid[7]);
 
     sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: Recvd CMSG_GAMEOBJECT_REPORT_USE Message [in game guid: %u]", GUID_LOPART(guid));
 

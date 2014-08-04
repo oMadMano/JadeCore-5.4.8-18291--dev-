@@ -560,10 +560,16 @@ void WorldSession::SendBroadcastTextDb2Reply(uint32 entry)
 void WorldSession::HandlePageTextQueryOpcode(WorldPacket& recvData)
 {
     sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: Received CMSG_PAGE_TEXT_QUERY");
-
+	ObjectGuid Guid;
     uint32 pageID;
+
     recvData >> pageID;
-    recvData.read_skip<uint64>();                          // guid
+
+	uint8 bitOrder[8] = { 2, 1, 3, 7, 6, 4, 0, 5 };
+	recvData.ReadBitInOrder(Guid, bitOrder);
+
+	uint8 byteOrder[8] = { 0, 6, 3, 5, 1, 7, 4, 2 };
+	recvData.ReadBytesSeq(Guid, byteOrder);
 
     while (pageID)
     {
