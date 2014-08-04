@@ -11312,8 +11312,29 @@ uint32 Player::GetXPRestBonus(uint32 xp)
 
 void Player::SetBindPoint(uint64 guid)
 {
-    WorldPacket data(SMSG_BINDER_CONFIRM, 8);
-    data << uint64(guid);
+	ObjectGuid Guid = guid;
+	WorldPacket data(SMSG_BINDER_CONFIRM, 9);
+
+	data.WriteBit(Guid[4]);
+	data.WriteBit(Guid[6]);
+	data.WriteBit(Guid[2]);
+	data.WriteBit(Guid[1]);
+	data.WriteBit(Guid[5]);
+	data.WriteBit(Guid[3]);
+	data.WriteBit(Guid[0]);
+	data.WriteBit(Guid[7]);
+
+	data.FlushBits();
+
+	data.WriteByteSeq(Guid[6]);
+	data.WriteByteSeq(Guid[2]);
+	data.WriteByteSeq(Guid[5]);
+	data.WriteByteSeq(Guid[0]);
+	data.WriteByteSeq(Guid[4]);
+	data.WriteByteSeq(Guid[7]);
+	data.WriteByteSeq(Guid[1]);
+	data.WriteByteSeq(Guid[3]);
+
     GetSession()->SendPacket(&data);
 }
 
