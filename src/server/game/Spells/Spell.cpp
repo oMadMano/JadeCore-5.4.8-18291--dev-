@@ -5423,7 +5423,7 @@ void Spell::TakePower()
     bool hit = true;
     if (m_caster->GetTypeId() == TYPEID_PLAYER)
     {
-        if (powerType == POWER_HOLY_POWER || powerType == POWER_ENERGY || powerType == POWER_RUNES)
+		if (powerType == POWER_HOLY_POWER || powerType == POWER_ENERGY || powerType == POWER_RUNES || powerType == POWER_CHI)
         {
             if (uint64 targetGUID = m_targets.GetUnitTargetGUID())
             {

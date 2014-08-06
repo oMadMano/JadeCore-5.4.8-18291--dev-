@@ -74,64 +74,256 @@ namespace Movement
     {
         b >> v.x >> v.y >> v.z;
     }
-	
+
+	void WriteLinearPath(const Spline<int32>& spline, ByteBuffer& data)
+	{
+		uint32 last_idx = spline.getPointCount() - 3;
+		const Vector3 * real_path = &spline.getPoint(1);
+
+		data << real_path[last_idx];   // destination
+		if (last_idx > 1)
+		{
+			Vector3 middle = (real_path[0] + real_path[last_idx]) / 2.f;
+			Vector3 offset;
+			// first and last points already appended
+			for (uint32 i = 1; i < last_idx; ++i)
+			{
+				offset = middle - real_path[i];
+				data.appendPackXYZ(offset.x, offset.y, offset.z);
+			}
+		}
+	}
+
+	void WriteCatmullRomPath(const Spline<int32>& spline, ByteBuffer& data)
+	{
+		uint32 count = spline.getPointCount() - 2;
+
+		for (uint32 i = 0; i < count; i++)
+			data << spline.getPoint(i + 2).y << spline.getPoint(i + 2).x << spline.getPoint(i + 2).z;
+	}
+
+	void WriteCatmullRomCyclicPath(const Spline<int32>& spline, ByteBuffer& data)
+	{
+		uint32 count = spline.getPointCount() - 2;
+		data << spline.getPoint(1).y << spline.getPoint(1).z << spline.getPoint(1).x; // fake point, client will erase it from the spline after first cycle done
+		for (uint32 i = 0; i < count; i++)
+			data << spline.getPoint(i + 1).y << spline.getPoint(i + 1).x << spline.getPoint(i + 1).z;
+	}
+
     void MoveSplineInit::Launch()
     {
-        MoveSpline& move_spline = *unit.movespline;
+		MoveSpline& move_spline = *unit.movespline;
 
-        Location real_position(unit.GetPositionX(), unit.GetPositionY(), unit.GetPositionZMinusOffset(), unit.GetOrientation());
-        // Elevators also use MOVEMENTFLAG_ONTRANSPORT but we do not keep track of their position changes
-        if (unit.GetTransGUID())
-        {
-            real_position.x = unit.GetTransOffsetX();
-            real_position.y = unit.GetTransOffsetY();
-            real_position.z = unit.GetTransOffsetZ();
-            real_position.orientation = unit.GetTransOffsetO();
-        }
+		Location real_position(unit.GetPositionX(), unit.GetPositionY(), unit.GetPositionZMinusOffset(), unit.GetOrientation());
+		// Elevators also use MOVEMENTFLAG_ONTRANSPORT but we do not keep track of their position changes
+		if (unit.GetTransGUID())
+		{
+			real_position.x = unit.GetTransOffsetX();
+			real_position.y = unit.GetTransOffsetY();
+			real_position.z = unit.GetTransOffsetZ();
+			real_position.orientation = unit.GetTransOffsetO();
+		}
 
-        // there is a big chance that current position is unknown if current state is not finalized, need compute it
-        // this also allows calculate spline position and update map position in much greater intervals
-        // Don't compute for transport movement if the unit is in a motion between two transports
-        if (!move_spline.Finalized() && move_spline.onTransport == (unit.GetTransGUID() != 0))
-            real_position = move_spline.ComputePosition();
+		// there is a big chance that current position is unknown if current state is not finalized, need compute it
+		// this also allows calculate spline position and update map position in much greater intervals
+		// Don't compute for transport movement if the unit is in a motion between two transports
+		if (!move_spline.Finalized() && move_spline.onTransport == (unit.GetTransGUID() != 0))
+			real_position = move_spline.ComputePosition();
 
-        // should i do the things that user should do? - no.
-        if (args.path.empty())
-            return;
+		// should i do the things that user should do? - no.
+		if (args.path.empty())
+			return;
 
-        // correct first vertex
-        args.path[0] = real_position;
-        args.initialOrientation = real_position.orientation;
-        move_spline.onTransport = (unit.GetTransGUID() != 0);
+		// correct first vertex
+		args.path[0] = real_position;
+		args.initialOrientation = real_position.orientation;
+		move_spline.onTransport = (unit.GetTransGUID() != 0);
 
-        uint32 moveFlags = unit.m_movementInfo.GetMovementFlags();
-        
-        moveFlags |= MOVEMENTFLAG_FORWARD;
+		uint32 moveFlags = unit.m_movementInfo.GetMovementFlags();
+		if (args.flags.walkmode)
+			moveFlags |= MOVEMENTFLAG_WALKING;
+		else
+			moveFlags &= ~MOVEMENTFLAG_WALKING;
+
+		moveFlags |= MOVEMENTFLAG_FORWARD;
+
+		if (!args.HasVelocity)
+			args.velocity = unit.GetSpeed(SelectSpeedType(moveFlags));
+
+		if (!args.Validate())
+			return;
 
 		if (moveFlags & MOVEMENTFLAG_ROOT)
 			moveFlags &= ~MOVEMENTFLAG_MASK_MOVING;
-
-		if (!args.HasVelocity)
-		{
-			if (args.flags.walkmode)
-				moveFlags |= MOVEMENTFLAG_WALKING;
-			else
-				moveFlags &= ~MOVEMENTFLAG_WALKING;
-
-            args.velocity = unit.GetSpeed(SelectSpeedType(moveFlags));
-		}
-
-        if (!args.Validate())
-            return;
 
         unit.m_movementInfo.SetMovementFlags(moveFlags);
         move_spline.Initialize(args);
 
 		WorldPacket data(SMSG_MONSTER_MOVE, 64);
-		PacketBuilder::WriteMonsterMove(move_spline, data);
+		ObjectGuid moverGUID = unit.GetGUID();
+		ObjectGuid transportGUID = unit.GetTransGUID();
+		MoveSplineFlag splineflags = move_spline.splineflags;
+		splineflags.enter_cycle = move_spline.isCyclic();
+		uint32 sendSplineFlags = splineflags & ~MoveSplineFlag::Mask_No_Monster_Move;
+		int8 seat = unit.GetTransSeat();
+
+		bool hasUnk1 = false;
+		bool hasUnk2 = false;
+		bool hasUnk3 = false;
+		bool unk4 = false;
+		uint32 unkCounter = 0;
+		uint32 packedWPcount = splineflags & MoveSplineFlag::UncompressedPath ? 0 : move_spline.spline.getPointCount() - 3;
+		uint32 WPcount = !packedWPcount ? move_spline.spline.getPointCount() - 2 : 1;
+		uint8 splineType = 0;
+
+		switch (splineflags & MoveSplineFlag::Mask_Final_Facing)
+		{
+		case MoveSplineFlag::Final_Target:
+			splineType = MonsterMoveFacingTarget;
+			break;
+		case MoveSplineFlag::Final_Angle:
+			splineType = MonsterMoveFacingAngle;
+			break;
+		case MoveSplineFlag::Final_Point:
+			splineType = MonsterMoveFacingSpot;
+			break;
+		default:
+			splineType = MonsterMoveNormal;
+			break;
+		}
+
+		// Writes bits
+
+		data << float(move_spline.spline.getPoint(move_spline.spline.first()).z);
+		data << float(move_spline.spline.getPoint(move_spline.spline.first()).x);
+		data << uint32(move_spline.GetId());
+		data << float(move_spline.spline.getPoint(move_spline.spline.first()).y);
+		data << float(0.0f);
+		data << float(0.0f);
+		data << float(0.0f);
+
+		data.WriteBit(1);
+		data.WriteBit(moverGUID[0]);
+		data.WriteBits(splineType, 3);
+
+		if (splineType == MonsterMoveFacingTarget)
+		{
+			ObjectGuid facingTargetGUID = move_spline.facing.target;
+			data.WriteBit(facingTargetGUID[6]);
+			data.WriteBit(facingTargetGUID[4]);
+			data.WriteBit(facingTargetGUID[3]);
+			data.WriteBit(facingTargetGUID[0]);
+			data.WriteBit(facingTargetGUID[5]);
+			data.WriteBit(facingTargetGUID[7]);
+			data.WriteBit(facingTargetGUID[1]);
+			data.WriteBit(facingTargetGUID[2]);
+		}
+
+		data.WriteBit(1);
+		data.WriteBit(1);
+		data.WriteBit(1);
+
+		uint32 uncompressedSplineCount = move_spline.splineflags & MoveSplineFlag::UncompressedPath ? move_spline.splineflags.cyclic ? move_spline.spline.getPointCount() - 2 : move_spline.spline.getPointCount() - 3 : 1;
+		data.WriteBits(uncompressedSplineCount, 20);
+
+		data.WriteBit(sendSplineFlags == 0);
+		data.WriteBit(moverGUID[3]);
+		data.WriteBit(1);
+		data.WriteBit(1);
+		data.WriteBit(1);
+		data << move_spline.Duration();
+		data.WriteBit(moverGUID[7]);
+		data.WriteBit(moverGUID[4]);
+		data.WriteBit(1);
+		data.WriteBit(moverGUID[5]);
+
+		int32 compressedSplineCount = move_spline.splineflags & MoveSplineFlag::UncompressedPath ? 0 : move_spline.spline.getPointCount() - 3;
+		data.WriteBits(compressedSplineCount, 22); // WP count
+
+		data.WriteBit(moverGUID[6]);
+
+		data.WriteBit(0);
+
+		data.WriteBit(transportGUID[7]);
+		data.WriteBit(transportGUID[1]);
+		data.WriteBit(transportGUID[3]);
+		data.WriteBit(transportGUID[0]);
+		data.WriteBit(transportGUID[6]);
+		data.WriteBit(transportGUID[4]);
+		data.WriteBit(transportGUID[5]);
+		data.WriteBit(transportGUID[2]);
+
+		data.WriteBit(0);
+		data.WriteBit(0);
+		data.WriteBit(moverGUID[2]);
+		data.WriteBit(moverGUID[1]);
+
+		WriteLinearPath(move_spline.spline, data);
+
+		data.WriteByteSeq(moverGUID[1]);
+
+		data.WriteBit(transportGUID[6]);
+		data.WriteBit(transportGUID[4]);
+		data.WriteBit(transportGUID[1]);
+		data.WriteBit(transportGUID[7]);
+		data.WriteBit(transportGUID[0]);
+		data.WriteBit(transportGUID[3]);
+		data.WriteBit(transportGUID[5]);
+		data.WriteBit(transportGUID[2]);
+		
+		if (splineflags & MoveSplineFlag::UncompressedPath)
+		{
+			if (splineflags.cyclic)
+				WriteCatmullRomCyclicPath(move_spline.spline, data);
+			else
+				WriteCatmullRomPath(move_spline.spline, data);
+		}
+		// Append end point for packed waypoints
+		else
+		{
+			uint32 last_idx = move_spline.spline.getPointCount() - 2;
+			const Vector3 * real_path = &move_spline.spline.getPoint(1);
+			data << real_path[last_idx].y << real_path[last_idx].z << real_path[last_idx].x; // destination
+		}
+
+		if (splineType == MonsterMoveFacingTarget)
+		{
+			ObjectGuid facingTargetGUID = move_spline.facing.target;
+			data.WriteByteSeq(facingTargetGUID[5]);
+			data.WriteByteSeq(facingTargetGUID[7]);
+			data.WriteByteSeq(facingTargetGUID[0]);
+			data.WriteByteSeq(facingTargetGUID[4]);
+			data.WriteByteSeq(facingTargetGUID[3]);
+			data.WriteByteSeq(facingTargetGUID[2]);
+			data.WriteByteSeq(facingTargetGUID[6]);
+			data.WriteByteSeq(facingTargetGUID[1]);
+		}
+
+		data.WriteByteSeq(moverGUID[5]);
+
+		if (splineType == MonsterMoveFacingAngle)
+			data << float(move_spline.facing.angle);
+
+		data.WriteByteSeq(moverGUID[3]);
+		data.WriteBit(!splineflags.parabolic);
+		data.WriteByteSeq(moverGUID[6]);
+
+		if (splineType == MonsterMoveFacingSpot)
+			data << move_spline.facing.f.x << move_spline.facing.f.y << move_spline.facing.f.z;
+
+		data.WriteByteSeq(moverGUID[0]);
+
+		if (seat != -1)
+			data << int8(seat);
+
+		data.WriteByteSeq(moverGUID[7]);
+		data.WriteByteSeq(moverGUID[2]);
+		data.WriteByteSeq(moverGUID[4]);
+
+		data << move_spline.Duration();
 
 		unit.SendMessageToSet(&data, true);
-    }
+	}
 
     void MoveSplineInit::Stop(bool force)
     {
@@ -147,7 +339,99 @@ namespace Movement
         move_spline.Initialize(args);
 
 		WorldPacket data(SMSG_MONSTER_MOVE, 64);
-		PacketBuilder::WriteStopMovement(loc, args.splineId, data);
+		ObjectGuid moverGUID = unit.GetGUID();
+		ObjectGuid transportGUID = unit.GetTransGUID();
+		MoveSplineFlag splineflags = move_spline.splineflags;
+		uint32 sendSplineFlags = 0;
+		int8 seat = unit.GetTransSeat();
+
+		bool hasUnk1 = false;
+		bool hasUnk2 = false;
+		bool hasUnk3 = false;
+		bool unk4 = false;
+		uint32 unkCounter = 0;
+		uint32 packedWPcount = 0;
+		uint32 WPcount = 0;
+		uint8 splineType = MonsterMoveStop;
+
+		// Writes bits
+		data << float(loc.z);
+		data << float(loc.x);
+		data << uint32(1);
+		data << float(loc.y);
+		data << float(0.0f); // Most likely transport Y
+		data << float(0.0f); // Most likely transport Z
+		data << float(0.0f); // Most likely transport X
+
+		data.WriteBit(!splineflags.parabolic); // Parabolic speed
+
+		data.WriteBit(moverGUID[0]);
+
+		data.WriteBits(MonsterMoveStop, 3);
+
+		data.WriteBit(1);
+		data.WriteBit(1);
+		data.WriteBit(1);
+
+		data.WriteBits(0, 20);
+
+		data.WriteBit(1);
+
+		data.WriteBit(moverGUID[3]);
+
+		data.WriteBit(1);
+		data.WriteBit(1);
+		data.WriteBit(1);
+		data.WriteBit(1);
+
+		data.WriteBit(moverGUID[7]);
+		data.WriteBit(moverGUID[4]);
+
+		data.WriteBit(1);
+
+		data.WriteBit(moverGUID[5]);
+
+		data.WriteBits(0, 22); // WP count
+
+		data.WriteBit(moverGUID[6]);
+
+		data.WriteBit(0); // Fake bit
+
+		data.WriteBit(transportGUID[7]);
+		data.WriteBit(transportGUID[1]);
+		data.WriteBit(transportGUID[3]);
+		data.WriteBit(transportGUID[0]);
+		data.WriteBit(transportGUID[6]);
+		data.WriteBit(transportGUID[4]);
+		data.WriteBit(transportGUID[5]);
+		data.WriteBit(transportGUID[2]);
+
+		data.WriteBit(0); // Send no block
+		data.WriteBit(0);
+
+		data.WriteBit(moverGUID[2]);
+		data.WriteBit(moverGUID[1]);
+
+		data.FlushBits();
+
+		data.WriteByteSeq(moverGUID[1]);
+
+		data.WriteByteSeq(transportGUID[6]);
+		data.WriteByteSeq(transportGUID[4]);
+		data.WriteByteSeq(transportGUID[1]);
+		data.WriteByteSeq(transportGUID[7]);
+		data.WriteByteSeq(transportGUID[0]);
+		data.WriteByteSeq(transportGUID[3]);
+		data.WriteByteSeq(transportGUID[5]);
+		data.WriteByteSeq(transportGUID[2]);
+
+		data.WriteByteSeq(moverGUID[5]);
+		data.WriteByteSeq(moverGUID[3]);
+		data.WriteByteSeq(moverGUID[6]);
+		data.WriteByteSeq(moverGUID[0]);
+		data.WriteByteSeq(moverGUID[7]);
+		data.WriteByteSeq(moverGUID[2]);
+		data.WriteByteSeq(moverGUID[4]);
 
         unit.SendMessageToSet(&data, true);
     }

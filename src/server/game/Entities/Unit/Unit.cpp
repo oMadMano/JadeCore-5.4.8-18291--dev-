@@ -1747,9 +1747,45 @@ void Unit::HandleEmoteCommand(uint32 anim_id)
         return;
     }
 
-    WorldPacket data(SMSG_EMOTE, 4 + 8);
-    data << uint32(anim_id);
-    data << uint64(GetGUID());
+	ObjectGuid CasterGuid = GetGUID();
+	ObjectGuid TargetGuid = GetGUID();
+	WorldPacket data(SMSG_EMOTE, 4 + 8);
+
+	data.WriteBit(CasterGuid[5]); //29TargetGuid
+	data.WriteBit(TargetGuid[7]); //23
+	data.WriteBit(TargetGuid[0]); //16
+	data.WriteBit(TargetGuid[3]); //19
+	data.WriteBit(CasterGuid[1]); //25TargetGuid
+	data.WriteBit(TargetGuid[4]); //20
+	data.WriteBit(CasterGuid[7]); //31TargetGuid
+	data.WriteBit(CasterGuid[2]); //26TargetGuid
+	data.WriteBit(CasterGuid[4]); //28TargetGuid
+	data.WriteBit(CasterGuid[3]); //27TargetGuid
+	data.WriteBit(TargetGuid[5]); //21
+	data.WriteBit(TargetGuid[1]); //17
+	data.WriteBit(TargetGuid[6]); //22
+	data.WriteBit(TargetGuid[2]); //18
+	data.WriteBit(CasterGuid[6]); //30TargetGuid
+	data.WriteBit(CasterGuid[0]); //24TargetGuid
+
+	data.WriteByteSeq(TargetGuid[6]);//22
+	data.WriteByteSeq(TargetGuid[2]);//18
+	data.WriteByteSeq(CasterGuid[2]);//26TargetGuid
+	data.WriteByteSeq(CasterGuid[5]);//29TargetGuid
+	data.WriteByteSeq(TargetGuid[7]);//23
+	data.WriteByteSeq(TargetGuid[5]);//21
+	data.WriteByteSeq(TargetGuid[3]);//19
+	data.WriteByteSeq(TargetGuid[1]);//17
+	data.WriteByteSeq(CasterGuid[3]);//27TargetGuid
+	data.WriteByteSeq(CasterGuid[1]);//25TargetGuid
+	data << uint32(anim_id);
+	data.WriteByteSeq(TargetGuid[4]);//20
+	data.WriteByteSeq(CasterGuid[4]);//28TargetGuid
+	data.WriteByteSeq(CasterGuid[7]);//31TargetGuid
+	data.WriteByteSeq(CasterGuid[0]);//24TargetGuid
+	data.WriteByteSeq(CasterGuid[6]);//30TargetGuid
+	data.WriteByteSeq(TargetGuid[0]);//16
+
     SendMessageToSet(&data, true);
 }
 

@@ -534,13 +534,13 @@ enum Opcodes
     CMSG_SWAP_INV_ITEM                                = 0x03DF, // 5.4.8
     CMSG_SWAP_ITEM                                    = 0x035D, // 5.4.8
     CMSG_SYNC_DANCE                                   = 0x0000,
-    CMSG_TAXICLEARALLNODES                            = 0x0000,
-    CMSG_TAXIENABLEALLNODES                           = 0x0000,
-    CMSG_TAXINODE_STATUS_QUERY                        = 0x0000,
+    CMSG_TAXI_CLEAR_ALL_NODES                         = 0x0000,
+    CMSG_TAXI_ENABLE_ALL_NODES                        = 0x0000,
+    CMSG_TAXI_NODE_STATUS_QUERY                       = 0x0000,
 	CMSG_TAXI_QUERY_AVAILABLE_NODES                   = 0x02E3, // 5.4.8
-    CMSG_TAXISHOWNODES                                = 0x0000,
+    CMSG_TAXI_SHOW_NODES                              = 0x0000,
     CMSG_TELEPORT_TO_UNIT                             = 0x0000,
-    CMSG_TEXT_EMOTE                                   = 0x0000,
+	CMSG_TEXT_EMOTE                                   = 0x07E9, // 5.4.8
     CMSG_TIME_ADJUSTMENT_RESPONSE                     = 0x0000,
     CMSG_TIME_SYNC_RESP                               = 0x01DB, // 5.4.8
     CMSG_TIME_SYNC_RESP_FAILED                        = 0x0058, // 5.4.8
@@ -900,7 +900,7 @@ enum Opcodes
     SMSG_DURABILITY_DAMAGE_DEATH                      = 0x0000,
     SMSG_DYNAMIC_DROP_ROLL_RESULT                     = 0x0000,
     SMSG_ECHO_PARTY_SQUELCH                           = 0x0000,
-	SMSG_EMOTE                                        = 0x002E, // 5.4.8
+	SMSG_EMOTE                                        = 0x1443, // 5.4.8
 	SMSG_ENABLE_BARBER_SHOP                           = 0x1222, // 5.4.8
     SMSG_ENABLE_HONOR_BUDDY_DETECTION                 = 0x0000,
     SMSG_ENCHANTMENT_LOG                              = 0x0000,
@@ -1510,7 +1510,7 @@ enum Opcodes
     SMSG_TAXI_NODE_STATUS                             = 0x0000,
     SMSG_TAXI_SHOW_NODES                              = 0x0000,
     SMSG_TEST_DROP_RATE_RESULT                        = 0x0000,
-    SMSG_TEXT_EMOTE                                   = 0x0000,
+	SMSG_TEXT_EMOTE                                   = 0x002E, // 5.4.8
 	SMSG_THREAT_CLEAR                                 = 0x180B, // 5.4.8
 	SMSG_THREAT_REMOVE                                = 0x1E0F, // 5.4.8
     SMSG_THREAT_UPDATE                                = 0x0000,

@@ -519,19 +519,18 @@ void WorldSession::SendPetNameQuery(ObjectGuid petnumber, ObjectGuid petguid)
     Creature* pet = ObjectAccessor::GetCreatureOrPetOrVehicle(*_player, petguid);
     if (!pet)
     {
-        WorldPacket data(SMSG_PET_NAME_QUERY_RESPONSE);
+		WorldPacket data(SMSG_PET_NAME_QUERY_RESPONSE, 8 + 1);
+		data.WriteBit(0);
+		data.FlushBits();
         data << uint64(petnumber);
-        data.WriteBit(0);
         _player->GetSession()->SendPacket(&data);
         return;
     }
 
     std::string name = pet->GetName();
 
-    WorldPacket data(SMSG_PET_NAME_QUERY_RESPONSE);
-
-    data << uint64(petnumber);
-    data.WriteBit(pet->isPet() ? 1 : 0);
+	WorldPacket data(SMSG_PET_NAME_QUERY_RESPONSE, (8 + 1 + 1 + 5 + name.size() + 4));
+	data.WriteBit(1);                               // has data
 
     if (Pet* playerPet = pet->ToPet())
     {
@@ -548,7 +547,8 @@ void WorldSession::SendPetNameQuery(ObjectGuid petnumber, ObjectGuid petguid)
         }
 
         data.WriteBit(0);   // Unk bit
-        data.WriteBits(name.size(), 8);
+		data.WriteBits(name.size(), 8);
+		data.FlushBits();
 
         if (declinedNames)
         {
@@ -557,10 +557,10 @@ void WorldSession::SendPetNameQuery(ObjectGuid petnumber, ObjectGuid petguid)
                     data.WriteString(declinedNames->name[i]);
         }
 
+		data.WriteString(pet->GetName());
         data << uint32(playerPet->GetUInt32Value(UNIT_FIELD_PET_NAME_TIMESTAMP));
-        data.WriteString(name);
+		data << uint64(petnumber);
     }
-
     _player->GetSession()->SendPacket(&data);
 }
 
